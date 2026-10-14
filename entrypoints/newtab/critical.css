@@ -1,0 +1,40 @@
+:root {
+  --bg: #f6efe0;
+  --fg: #2b2118;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14110e;
+    --fg: #f1e8d6;
+  }
+}
+
+:root[data-theme="light"] {
+  --bg: #f6efe0;
+  --fg: #2b2118;
+}
+
+:root[data-theme="dark"] {
+  --bg: #14110e;
+  --fg: #f1e8d6;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+#app {
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+}
+
+#date {
+  font-size: clamp(2rem, 6vw, 4rem);
+}

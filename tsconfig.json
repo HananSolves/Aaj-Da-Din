@@ -1,0 +1,22 @@
+{
+  "extends": "./.wxt/tsconfig.json",
+  "compilerOptions": {
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noEmit": true,
+    "erasableSyntaxOnly": true,
+    "allowImportingTsExtensions": true,
+    "types": ["node"]
+  },
+  "include": [
+    ".wxt/wxt.d.ts",
+    "entrypoints",
+    "src",
+    "scripts",
+    "tests",
+    "wxt.config.ts",
+    "vitest.config.ts"
+  ]
+}

@@ -1,0 +1,24 @@
+# Dependencies and build output
+node_modules/
+.pnpm-store/
+.output/
+.wxt/
+*.zip
+*.tsbuildinfo
+coverage/
+
+# Full-size photo originals (re-fetchable from content/photos.csv source_url)
+photos-src/
+
+# Local tooling (machine-specific)
+.fallow/
+.vscode/
+.claude/settings.local.json
+web-ext.config.ts
+
+# Logs, OS junk, secrets
+*.log
+.DS_Store
+Thumbs.db
+.env*
+*.local
