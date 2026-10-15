@@ -3,12 +3,14 @@ import { parseMirror } from "../src/settings/mirror.ts";
 import { defaultSettings } from "../src/settings/types.ts";
 
 const valid = {
-  schemaVersion: 2,
+  schemaVersion: 3,
   calendars: ["hijri", "gregorian"],
   theme: "raat",
   dateStyle: "compact",
   background: "solid",
   hijriOffset: 1,
+  festivalSets: ["muslim"],
+  gurpurabSource: "nanakshahi",
 };
 const parse = (value: unknown) => parseMirror(JSON.stringify(value));
 
@@ -26,10 +28,22 @@ describe("parseMirror", () => {
     const v1 = { schemaVersion: 1, calendars: ["desi"], theme: "dark", hijriOffset: 0 };
     expect(parse(v1)).toEqual({
       ...v1,
-      schemaVersion: 2,
+      schemaVersion: 3,
       theme: "raat",
       dateStyle: "list",
       background: "photo",
+      festivalSets: ["cultural", "sikh"],
+      gurpurabSource: "sgpc",
+    });
+  });
+
+  it("migrates a schema 2 mirror in memory", () => {
+    const { festivalSets: _sets, gurpurabSource: _source, ...v2 } = valid;
+    expect(parse({ ...v2, schemaVersion: 2 })).toEqual({
+      ...v2,
+      schemaVersion: 3,
+      festivalSets: ["cultural", "sikh"],
+      gurpurabSource: "sgpc",
     });
   });
 
@@ -38,7 +52,7 @@ describe("parseMirror", () => {
   });
 
   it.each([
-    ["a newer schemaVersion", { ...valid, schemaVersion: 3 }],
+    ["a newer schemaVersion", { ...valid, schemaVersion: 4 }],
     ["no schemaVersion", { ...valid, schemaVersion: undefined }],
     ["empty calendars", { ...valid, calendars: [] }],
     ["calendars that is not an array", { ...valid, calendars: "gregorian" }],
@@ -51,6 +65,9 @@ describe("parseMirror", () => {
     ["an unknown theme", { ...valid, theme: "light" }],
     ["an unknown date style", { ...valid, dateStyle: "grid" }],
     ["an unknown background", { ...valid, background: "video" }],
+    ["an unknown festival set", { ...valid, festivalSets: ["jain"] }],
+    ["a duplicate festival set", { ...valid, festivalSets: ["sikh", "sikh"] }],
+    ["an unknown Gurpurab source", { ...valid, gurpurabSource: "akal-takht" }],
   ])("rejects %s", (_name, value) => {
     expect(parse(value)).toBeNull();
   });

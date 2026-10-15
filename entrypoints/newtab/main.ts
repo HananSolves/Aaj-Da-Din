@@ -1,12 +1,14 @@
 import { loadCalendarYear, localIso } from "../../src/calendars/year-data.ts";
 import { type FestivalLines, festivalLines } from "../../src/festivals/lines.ts";
+import { festivalSets } from "../../src/festivals/sets.ts";
 import { readMirror } from "../../src/settings/mirror.ts";
 import { loadSettings } from "../../src/settings/store.ts";
 import { type CalendarId, defaultSettings, type Settings } from "../../src/settings/types.ts";
 import { applyLook } from "../../src/themes/look.ts";
 import { todayRows } from "../../src/ui/today.ts";
 
-// With no settings anywhere, the page shows every calendar until onboarding exists (build-plan 12).
+// With no settings anywhere, the page shows every calendar and festival set until onboarding exists
+// (build-plan 12).
 const v0Calendars: CalendarId[] = ["gregorian", "desi", "bikrami", "nanakshahi", "hijri"];
 
 function element<K extends keyof HTMLElementTagNameMap>(
@@ -36,8 +38,16 @@ async function renderDates(dates: HTMLElement, settings: Settings, now: Date): P
   );
 }
 
-async function renderFestivals(festivals: HTMLElement, now: Date): Promise<void> {
-  const lines: FestivalLines = await festivalLines(now, ["cultural", "sikh"]).catch(() => ({}));
+async function renderFestivals(
+  festivals: HTMLElement,
+  settings: Settings,
+  now: Date,
+): Promise<void> {
+  const lines: FestivalLines = await festivalLines(now, {
+    sets: settings.festivalSets,
+    source: settings.gurpurabSource,
+    hijriOffset: settings.hijriOffset,
+  }).catch(() => ({}));
   const { today, tomorrow } = lines;
   festivals.replaceChildren(
     ...(today ? [element("p", today, "today")] : []),
@@ -47,16 +57,20 @@ async function renderFestivals(festivals: HTMLElement, now: Date): Promise<void>
 
 async function start(dates: HTMLElement, festivals: HTMLElement): Promise<void> {
   const now = new Date();
-  const painted = readMirror() ?? { ...defaultSettings, calendars: v0Calendars };
+  const painted = readMirror() ?? {
+    ...defaultSettings,
+    calendars: v0Calendars,
+    festivalSets: [...festivalSets],
+  };
   await renderDates(dates, painted, now);
   // Lines arrive after the dates, which stay put because the layout is anchored to the top.
-  await renderFestivals(festivals, now);
+  await renderFestivals(festivals, painted, now);
 
   // storage.sync is the source of truth; the mirror may be a visit behind a change from another device.
   const synced = await loadSettings();
   if (synced && JSON.stringify(synced) !== JSON.stringify(painted)) {
     applyLook(synced);
-    await renderDates(dates, synced, now);
+    await Promise.all([renderDates(dates, synced, now), renderFestivals(festivals, synced, now)]);
   }
 }
 

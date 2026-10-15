@@ -3,18 +3,24 @@ import { type MigrationStep, parseSettings } from "../src/settings/migrations.ts
 import { defaultSettings } from "../src/settings/types.ts";
 
 const valid = {
-  schemaVersion: 2,
+  schemaVersion: 3,
   calendars: ["hijri", "gregorian"],
   theme: "raat",
   dateStyle: "centered",
   background: "solid",
   hijriOffset: 1,
+  festivalSets: ["muslim", "cultural"],
+  gurpurabSource: "nanakshahi",
 };
 
 describe("parseSettings", () => {
   it("returns a valid value unchanged", () => {
     expect(parseSettings(valid)).toEqual(valid);
     expect(parseSettings(defaultSettings)).toEqual(defaultSettings);
+  });
+
+  it("accepts no festival sets at all", () => {
+    expect(parseSettings({ ...valid, festivalSets: [] })).toEqual({ ...valid, festivalSets: [] });
   });
 
   it("keeps extra fields", () => {
@@ -26,11 +32,11 @@ describe("parseSettings", () => {
   });
 
   it.each([
-    ["a newer schemaVersion", { ...valid, schemaVersion: 3 }],
+    ["a newer schemaVersion", { ...valid, schemaVersion: 4 }],
     ["no schemaVersion", { ...valid, schemaVersion: undefined }],
     ["schemaVersion 0", { ...valid, schemaVersion: 0 }],
     ["a fractional schemaVersion", { ...valid, schemaVersion: 1.5 }],
-    ["a string schemaVersion", { ...valid, schemaVersion: "2" }],
+    ["a string schemaVersion", { ...valid, schemaVersion: "3" }],
     ["empty calendars", { ...valid, calendars: [] }],
     ["calendars that is not an array", { ...valid, calendars: "gregorian" }],
     ["an unknown calendar", { ...valid, calendars: ["gregorian", "julian"] }],
@@ -45,6 +51,13 @@ describe("parseSettings", () => {
     ["a missing date style", { ...valid, dateStyle: undefined }],
     ["an unknown background", { ...valid, background: "video" }],
     ["a missing background", { ...valid, background: undefined }],
+    ["festivalSets that is not an array", { ...valid, festivalSets: "sikh" }],
+    ["an unknown festival set", { ...valid, festivalSets: ["sikh", "jain"] }],
+    ["a non-string festival set", { ...valid, festivalSets: [1] }],
+    ["a duplicate festival set", { ...valid, festivalSets: ["sikh", "sikh"] }],
+    ["missing festivalSets", { ...valid, festivalSets: undefined }],
+    ["an unknown Gurpurab source", { ...valid, gurpurabSource: "akal-takht" }],
+    ["a missing Gurpurab source", { ...valid, gurpurabSource: undefined }],
   ])("rejects %s", (_name, value) => {
     expect(parseSettings(value)).toBeNull();
   });
@@ -61,10 +74,12 @@ describe("parseSettings 1 to 2", () => {
   it("maps dark to raat and adds the new defaults, keeping the other fields", () => {
     expect(parseSettings(v1)).toEqual({
       ...v1,
-      schemaVersion: 2,
+      schemaVersion: 3,
       theme: "raat",
       dateStyle: "list",
       background: "photo",
+      festivalSets: ["cultural", "sikh"],
+      gurpurabSource: "sgpc",
     });
   });
 
@@ -83,6 +98,37 @@ describe("parseSettings 1 to 2", () => {
   });
 });
 
+describe("parseSettings 2 to 3", () => {
+  const v2 = {
+    schemaVersion: 2,
+    calendars: ["hijri", "gregorian"],
+    theme: "sarson",
+    dateStyle: "compact",
+    background: "solid",
+    hijriOffset: -1,
+  };
+
+  it("adds the cultural and Sikh sets and the SGPC source, keeping the other fields", () => {
+    expect(parseSettings(v2)).toEqual({
+      ...v2,
+      schemaVersion: 3,
+      festivalSets: ["cultural", "sikh"],
+      gurpurabSource: "sgpc",
+    });
+  });
+
+  it("overwrites nothing a v2 value could not have held", () => {
+    expect(parseSettings({ ...v2, festivalSets: ["hindu"] })?.festivalSets).toEqual([
+      "cultural",
+      "sikh",
+    ]);
+  });
+
+  it("still rejects a v2 value whose other fields are invalid", () => {
+    expect(parseSettings({ ...v2, theme: "light" })).toBeNull();
+  });
+});
+
 describe("parseSettings migration runner", () => {
   const trail: string[] = [];
   const steps: MigrationStep[] = [
@@ -96,7 +142,7 @@ describe("parseSettings migration runner", () => {
       return { ...stored, note: `${String(stored.note)}-v4` };
     },
   ];
-  const v2 = { ...valid, note: "n" };
+  const v2 = { ...valid, schemaVersion: 2, note: "n" };
 
   it("runs every step from the stored version, in order", () => {
     trail.length = 0;

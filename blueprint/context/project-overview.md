@@ -1,6 +1,6 @@
 # Aaj Da Din - Project Overview
 
-<!-- blueprint:source-hash 9f4a8866538b8b2a65f8c0e3d3920df1cd6f893a1bb445160c80fe27fd0c651e -->
+<!-- blueprint:source-hash f2fc7ec3b92f5039f709ac1f13eb48c21d3919a8a710edccb44b32bf4c21987b -->
 
 > A Punjabi new-tab browser extension (Chrome, Edge, Firefox): today's date in the calendars Punjabis use, today's and tomorrow's festivals, a daily photo of Punjab and a daily fact. Fast, private, open source, works offline.
 
@@ -45,7 +45,7 @@ Current milestone: **v0**. Scaffold, CI, size check and the Gregorian formatter 
 
 8. **Settings store** - `storage.sync`, `schemaVersion`, migrations, `localStorage` mirror.
 9. **Themes and date styles** - 6-8 themes, 3 date styles, solid-colour mode.
-10. **Hindu and Muslim sets** - joined lines ("Today: Diwali · Bandi Chhor Divas"), "expected" labels for Muslim dates, Gurpurab source switch.
+10. **Hindu and Muslim sets** - joined lines ("Today: Diwali · Bandi Chhor Divas"), "expected" labels for Muslim dates, Gurpurab source switch. Hindu dates are sourced lists for 2026-2030 only; 2031-2036 are still to be added.
 11. **Settings panel** - lazy-loaded.
 12. **Onboarding** - three skippable screens; default sets follow chosen calendars.
 13. **Content pipeline** - CSVs, build and optimise scripts, verified-only filter, post-paint remote refresh.
@@ -75,7 +75,7 @@ Current milestone: **v0**. Scaffold, CI, size check and the Gregorian formatter 
 - **Bikrami (lunisolar, Purnimanta):** Punjabi month names, then paksha and day, then Samvat (`Assu Vadi 1, Samvat 2083`). Tithi is read at sunrise: 1-15 is Sudi, 16-30 is Vadi (day = tithi - 15). An adhik month takes an `Adhik` prefix (`Adhik Jeth Sudi 3`). Samvat = Gregorian + 57 from Chaitra Shukla 1 (the day Pratipada begins, 19 March 2026), + 56 before; in an adhik-Chaitra year (2029) it turns in the nija month, as Drik Panchang dates it.
 - **Date rules:** published (jantri/IST) date used wherever the user is; day changes at local midnight; no geolocation; Hijri shows the civil-day date, not sunset-based.
 - **Festival sets:** Punjabi cultural (always on: Lohri, Maghi, Basant Panchami, Vaisakhi, Teeyan); Sikh (Prakash/Shaheedi Purabs, Khalsa Sajna Divas, Bandi Chhor Divas, Hola Mohalla, Gurgaddi days, Shaheedi Jor Mela); Hindu (Maha Shivratri, Holi, Ram Navami, Raksha Bandhan, Janmashtami, Dussehra, Karva Chauth, Diwali); Muslim (Ramadan begins, Eid al-Fitr, Eid al-Adha, Islamic New Year, Ashura; labelled "expected"). Neutrality: celebrated or observed days only, no political anniversaries. Gurpurab dates default to the SGPC jantri, switchable to Original Nanakshahi, source labelled.
-- **Festival dating:** each festival is a rule over the lookups: a fixed date, a sangrand (Lohri is the day before Maghi), a Bikrami tithi in the nija month, or a list of sourced dates where the sunrise tithi cannot give the SGPC date (Bandi Chhor Divas, so it shows only for sourced years). A tithi at two sunrises counts on the first day, and one at no sunrise on the day it begins. A sweep over 2026-2036 guards the gaps.
+- **Festival dating:** each festival is a rule over the lookups: a fixed date, a sangrand (Lohri is the day before Maghi), a Bikrami tithi in the nija month, or a list of sourced dates where the sunrise tithi cannot give the SGPC date (Bandi Chhor Divas, so it shows only for sourced years). A tithi at two sunrises counts on the first day, and one at no sunrise on the day it begins. A sweep over 2026-2036 guards the gaps. Hindu festivals are all `dates` lists (Drik Panchang, New Delhi, Smarta where it lists both) for 2026-2030, because the sunrise tithi is a day off for festivals dated by the midnight, afternoon or evening tithi; a year with no listed date shows no Hindu line. Muslim festivals are a `hijri` rule on the Hijri offset date and read "(expected)". Five Sikh Gurpurabs carry an `original` fixed Gregorian date used under Original Nanakshahi, and the line names that source; Hola Mohalla, Bandi Chhor Divas and Guru Nanak's Prakash were movable in 2003 and do not change.
 - **Defaults from onboarding calendars:** Nanakshahi -> Sikh, Bikrami -> Hindu, Hijri -> Muslim. Skipping onboarding applies Gregorian + Desi + Nanakshahi, default theme, photo on.
 - **Correctness:** tested against SGPC jantri / panchang fixtures. Never "fix" a date without a source.
 
@@ -85,18 +85,20 @@ No backend or database: bundled static data, a remote copy of it, and the user's
 
 ### Settings (`storage.sync`, mirrored to `localStorage` key `add:settings`)
 
-Existing in `src/settings/types.ts` (schema 2):
+Existing in `src/settings/types.ts` (schema 3):
 
-- `schemaVersion` (2) - bump on shape change and add a migration in `migrations.ts`
+- `schemaVersion` (3) - bump on shape change and add a migration in `migrations.ts`
 - `calendars` (`CalendarId[]`) - enabled calendars in display order; `CalendarId` = `gregorian | desi | bikrami | nanakshahi | hijri`
 - `theme` (`ThemeId`) - `chitta | raat | sarson | phulkari | mitti | neela`; with nothing stored, `prefers-color-scheme` picks `chitta` or `raat`
 - `dateStyle` (`list | centered | compact`) - layout only
 - `background` (`photo | solid`) - stored now, read by the photo layer (item 14); no visible effect before then
-- `hijriOffset` (-1 | 0 | 1) - labelled "Match your local mosque"
+- `hijriOffset` (-1 | 0 | 1) - labelled "Match your local mosque"; it also moves the Muslim festival lines
+- `festivalSets` (`FestivalSet[]`) - enabled sets from `cultural | hindu | sikh | muslim`, any subset including none; a v2 value migrates to `cultural` + `sikh`
+- `gurpurabSource` (`sgpc | nanakshahi`) - `sgpc` by default; `nanakshahi` is Original Nanakshahi (2003)
 
-Planned from plan §7.3 (exact names decided when built, items 10-12): enabled festival sets, Gurpurab source (`sgpc | nanakshahi`), show Today/Tomorrow lines, show fact.
+Planned from plan §7.3 (exact names decided when built, items 11-15): show Today/Tomorrow lines, show fact.
 
-The store (item 8, `src/settings/{migrations,store}.ts`) keeps the whole `Settings` object in `storage.sync` under the single key `settings`. `parseSettings` validates it and the mirror alike (`parseMirror` is `null` for a missing or invalid value). Older schemas migrate in memory on read and are not written back; a newer schema is ignored (`null`), never overwritten; `saveSettings` writes `storage.sync` before the mirror. The new tab paints from the mirror, then re-renders if `storage.sync` differs. With no settings anywhere, v0 shows all five calendars and the cultural and Sikh sets, while `defaultSettings` keeps Gregorian + Desi + Nanakshahi as the skip-onboarding default.
+The store (item 8, `src/settings/{migrations,store}.ts`) keeps the whole `Settings` object in `storage.sync` under the single key `settings`. `parseSettings` validates it and the mirror alike (`parseMirror` is `null` for a missing or invalid value). Older schemas migrate in memory on read and are not written back; a newer schema is ignored (`null`), never overwritten; `saveSettings` writes `storage.sync` before the mirror. The new tab paints from the mirror, then re-renders if `storage.sync` differs. With no settings anywhere, v0 shows all five calendars and all four festival sets, while `defaultSettings` keeps Gregorian + Desi + Nanakshahi as the skip-onboarding default.
 
 > Locked: `storage.sync` holds settings only (100 KB total, 8 KB per item). Once published, users' synced settings outlive releases, so `schemaVersion` and its migration path must keep working.
 
@@ -204,7 +206,7 @@ Plan §10 items (resolve in the plans, then re-run `/overview`):
 
 Found while generating this overview:
 
-- **Settings code vs plan** - `Settings` (schema 2) has six fields; plan §7.3 still needs festival sets, Gurpurab source and the Today/Tomorrow and fact toggles, added with items 10-12, each bumping `schemaVersion` with a migration step.
+- **Settings code vs plan** - `Settings` (schema 3) has eight fields; plan §7.3 still needs the Today/Tomorrow and fact toggles, added with items 11-15, each bumping `schemaVersion` with a migration step.
 - **Oversized items** - build-plan items 7 (photos + fact + sign-off checks) and 13 (content pipeline: CSVs, two scripts, filter, remote refresh) bundle several concerns; `/feature` may propose splitting them.
 - **Layout vs code** - plan §5.5 names `src/festivals/resolve.ts`; feature 5 built `rules.ts`, `festivals.ts` and `lines.ts`. Plan §5.5 lists `ui/` as lazy chunks; the eager date-row view-model is `src/ui/today.ts`.
 - **Domain** - no Cloudflare domain is named yet (needed for content URLs, privacy page and the Firefox ID).
