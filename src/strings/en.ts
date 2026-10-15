@@ -2,7 +2,7 @@
 export const en = {
   today: "Today",
   tomorrow: "Tomorrow",
-  nanakshahiMonths: [
+  punjabiMonths: [
     "Chet",
     "Vaisakh",
     "Jeth",
@@ -17,6 +17,10 @@ export const en = {
     "Phagun",
   ],
   nanakshahiEra: "NS",
+  adhik: "Adhik",
+  sudi: "Sudi",
+  vadi: "Vadi",
+  samvat: "Samvat",
   hijriMonths: [
     "Muharram",
     "Safar",

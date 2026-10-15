@@ -1,6 +1,6 @@
 # Aaj Da Din - Project Overview
 
-<!-- blueprint:source-hash 9d4f00c2c06f32993e88d931b14e48062847fa2e0243321031dfba9b15a8d8cb -->
+<!-- blueprint:source-hash 49134ddb492486723937f552c7f1b01c3933bb9e77b71ff8e16d378eea7e742e -->
 
 > A Punjabi new-tab browser extension (Chrome, Edge, Firefox): today's date in the calendars Punjabis use, today's and tomorrow's festivals, a daily photo of Punjab and a daily fact. Fast, private, open source, works offline.
 
@@ -71,6 +71,8 @@ Current milestone: **v0**. Scaffold, CI, size check and the Gregorian formatter 
 | Hijri | `Intl` umalqura + offset | Punjabi Muslims |
 
 - **Nanakshahi months (fixed):** Chet 14 Mar/31, Vaisakh 14 Apr/31, Jeth 15 May/31, Harh 15 Jun/31, Sawan 16 Jul/31, Bhadon 16 Aug/30, Assu 15 Sep/30, Katak 15 Oct/30, Maghar 14 Nov/30, Poh 14 Dec/30, Magh 13 Jan/30, Phagun 12 Feb/30 (31 in Gregorian leap years). NS year = Gregorian − 1468 on/after 14 March, − 1469 before.
+- **Desi (solar):** a sankranti belongs to the sunrise-to-sunrise day (Amritsar / IST) that contains it, and the sangrand day is day 1 of the new month. Shown as day and month only (`25 Assu`), no year.
+- **Bikrami (lunisolar, Purnimanta):** Punjabi month names, then paksha and day, then Samvat (`Assu Vadi 1, Samvat 2083`). Tithi is read at sunrise: 1-15 is Sudi, 16-30 is Vadi (day = tithi - 15). An adhik month takes an `Adhik` prefix (`Adhik Jeth Sudi 3`). Samvat = Gregorian + 57 from Chaitra Shukla 1 (the day Pratipada begins, 19 March 2026), + 56 before; in an adhik-Chaitra year (2029) it turns in the nija month, as Drik Panchang dates it.
 - **Date rules:** published (jantri/IST) date used wherever the user is; day changes at local midnight; no geolocation; Hijri shows the civil-day date, not sunset-based.
 - **Festival sets:** Punjabi cultural (always on: Lohri, Maghi, Basant Panchami, Vaisakhi, Teeyan); Sikh (Prakash/Shaheedi Purabs, Khalsa Sajna Divas, Bandi Chhor Divas, Hola Mohalla, Gurgaddi days, Shaheedi Jor Mela); Hindu (Maha Shivratri, Holi, Ram Navami, Raksha Bandhan, Janmashtami, Dussehra, Karva Chauth, Diwali); Muslim (Ramadan begins, Eid al-Fitr, Eid al-Adha, Islamic New Year, Ashura; labelled "expected"). Neutrality: celebrated or observed days only, no political anniversaries. Gurpurab dates default to the SGPC jantri, switchable to Original Nanakshahi, source labelled.
 - **Defaults from onboarding calendars:** Nanakshahi -> Sikh, Bikrami -> Hindu, Hijri -> Muslim. Skipping onboarding applies Gregorian + Desi + Nanakshahi, default theme, photo on.
@@ -102,9 +104,14 @@ Planned from plan §7.3 (exact names decided when built, items 8-12): date style
 
 ### CalendarYear (`data/calendar/<year>.json`, generated, 2026-2036)
 
-One file per year, bundled and also published at `/data/calendar/<year>.json`. Holds sangrand dates, tithis and Purnimanta month names (Amritsar / IST). Load only the current year (plus next year in late December).
+One file per year, bundled and also published at `/data/calendar/<year>.json`. Holds sangrand dates, tithis and Purnimanta month starts (Amritsar / IST). A date is looked up in the file for its own Gregorian year, so only the current year is loaded, plus next year's when Tomorrow falls on 1 January.
 
-> TODO: exact JSON shape is decided in feature 3.
+- `year` (number)
+- `sangrand` (13 sorted ISO dates) - index 0 is the previous December's sangrand (starts Poh), indices 1-12 are this year's; entry `i` starts desi month `((9 + i) % 12) + 1`, Chet = 1
+- `tithi` (number[], 1-30, one per day of the year) - tithi at sunrise
+- `months` (`[startISO, monthIndex, adhik 0|1][]`, 13-15 entries) - `monthIndex` 0 = Chaitra; the first entry is the month in progress on 1 January
+
+> Locked: this shape is read by `src/calendars/desi.ts` and `bikrami.ts`, and is also published remotely, so a change needs both updated together. The loader resolves `undefined` for a year with no file; the page must still render.
 
 ### Photo (`content/photos.csv`; source of truth)
 
@@ -180,8 +187,6 @@ Single page: the new tab (`entrypoints/newtab/`). Everything else is a lazy pane
 
 Plan §10 items (resolve in the plans, then re-run `/overview`):
 
-- [ ] **Desi (solar) rules** - which rule assigns the sangrand day (sunrise, sunset, midnight) and when the desi year number changes. Settle against the SGPC jantri in v0 (items 3-4).
-- [ ] **Bikrami lunisolar** - Purnimanta month naming and how adhik months are shown.
 - [ ] **SGPC jantri 2026-2027** - collect as test fixtures.
 - [ ] **Muslim set** - include Mawlid / Eid Milad-un-Nabi and Shab-e-Barat?
 - [ ] **Clock** - should the page also show the time?

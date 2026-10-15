@@ -480,8 +480,8 @@ Established facts only. No expected user count is set; the sponsor-tile decision
 
 ## 10. Open questions / to verify
 
-- [ ] **Desi (solar) rules:** which rule assigns the sangrand day (sunrise, sunset or midnight), and when the desi year number changes. Settle against the SGPC jantri and Punjabi jantris in v0.
-- [ ] **Bikrami lunisolar:** Purnimanta month naming, and how adhik (extra) months are shown.
+- [x] **Desi (solar) rules:** settled in v0 (features 3 and 4). A sankranti belongs to the sunrise-to-sunrise day (Amritsar / IST) that contains it, and the sangrand day is day 1 of the new month (Punjab Data's jantri writes "1 Vaisakh (Sangrand)"). Desi shows day and month only, so it has no year number.
+- [x] **Bikrami lunisolar:** settled in v0 (feature 4). Months use the same Punjabi names as the desi calendar, then the paksha and day: `Assu Vadi 1, Samvat 2083`. Tithi 1-15 is Sudi and 16-30 is Vadi, read at sunrise. An adhik month takes an `Adhik` prefix, for example `Adhik Jeth Sudi 3`. The Samvat year is Gregorian + 57 from Chaitra Shukla 1 (the day Pratipada begins, so 19 March 2026) and + 56 before it. In a year with an adhik Chaitra (2029) it turns in the nija month, as Drik Panchang dates it.
 - [ ] **SGPC jantri** for 2026 and 2027: collect it as test fixtures.
 - [ ] **Muslim set:** include Mawlid / Eid Milad-un-Nabi and Shab-e-Barat? (Widely observed, but not by all.)
 - [ ] **Clock:** should the page also show the time? (Not discussed yet.)
@@ -503,6 +503,7 @@ Established facts only. No expected user count is set; the sponsor-tile decision
 | System font stack in V1 | ✅ Decided |
 | English only in V1 | ✅ Decided |
 | Calendars: Gregorian, Desi solar, Bikrami lunisolar, Nanakshahi 2003, Hijri (±1) | ✅ Decided |
+| Desi: sangrand day is day 1, no year shown. Bikrami: Sudi/Vadi from sunrise tithi, `Adhik` prefix, Samvat from Chaitra Shukla 1 (nija month in an adhik-Chaitra year) | ✅ Decided |
 | Gurpurab dates: SGPC default, Nanakshahi optional | ✅ Decided |
 | Today + Tomorrow festival lines in V1 | ✅ Decided |
 | Countdown deferred to V1.x | ✅ Decided |

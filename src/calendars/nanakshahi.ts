@@ -66,5 +66,5 @@ export function toNanakshahi(date: Date): NanakshahiDate {
 /** Formats the Nanakshahi date as, for example, "27 Assu 558 NS". */
 export function formatNanakshahi(date: Date): string {
   const { day, month, year } = toNanakshahi(date);
-  return `${day} ${en.nanakshahiMonths[month - 1]} ${year} ${en.nanakshahiEra}`;
+  return `${day} ${en.punjabiMonths[month - 1]} ${year} ${en.nanakshahiEra}`;
 }
