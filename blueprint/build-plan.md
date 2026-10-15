@@ -14,7 +14,7 @@ not listed here.
 ## v0 — Internal prototype
 
 - [x] 1. **Nanakshahi calendar** - original 2003 fixed-month arithmetic, tested against a published source.
-- [ ] 2. **Hijri calendar** - umm al-Qura via `Intl` with the −1/0/+1 offset.
+- [x] 2. **Hijri calendar** - umm al-Qura via `Intl` with the −1/0/+1 offset.
 - [ ] 3. **Desi and Bikrami data build** - `build-calendar.ts` generates sangrand, tithi and Purnimanta data for 2026–2036; fixtures checked against the SGPC jantri and a panchang.
 - [ ] 4. **Desi and Bikrami lookups** - read the current year's generated data (next year's in late December); settles the sangrand-day and adhik-month questions.
 - [ ] 5. **Festival resolver (cultural + Sikh)** - festival data and the "Today:" / "Tomorrow:" lines, SGPC dates.
