@@ -24,7 +24,7 @@ not listed here.
 ## V1 — Public launch
 
 - [x] 8. **Settings store** - `storage.sync` with `schemaVersion`, migrations and the `localStorage` mirror.
-- [ ] 9. **Themes and date styles** - 6–8 colour themes, 3 date styles, solid-colour (no photo) mode.
+- [x] 9. **Themes and date styles** - 6–8 colour themes, 3 date styles, solid-colour (no photo) mode.
 - [ ] 10. **Hindu and Muslim festival sets** - joined festival lines, "expected" labels, Gurpurab source switch (SGPC / Original Nanakshahi).
 - [ ] 11. **Settings panel** - lazy-loaded; calendars, look, festivals, Hijri offset, fact toggle, About.
 - [ ] 12. **Onboarding** - three skippable screens with live preview; default festival sets follow the chosen calendars.

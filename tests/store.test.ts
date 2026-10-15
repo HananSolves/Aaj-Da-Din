@@ -7,12 +7,14 @@ vi.mock("wxt/browser", () => ({ browser: { storage: { sync } } }));
 
 const MIRROR_KEY = "add:settings";
 const stored: Settings = {
-  schemaVersion: 1,
+  schemaVersion: 2,
   calendars: ["hijri", "gregorian"],
-  theme: "dark",
+  theme: "raat",
+  dateStyle: "centered",
+  background: "solid",
   hijriOffset: 1,
 };
-const mirrored: Settings = { ...stored, calendars: ["desi"], theme: "light" };
+const mirrored: Settings = { ...stored, calendars: ["desi"], theme: "chitta" };
 
 let local: Map<string, string>;
 
@@ -38,7 +40,7 @@ describe("loadSettings", () => {
   it.each([
     ["nothing stored", {}],
     ["garbage", { settings: "garbage" }],
-    ["a newer schemaVersion", { settings: { ...stored, schemaVersion: 2 } }],
+    ["a newer schemaVersion", { settings: { ...stored, schemaVersion: 3 } }],
     ["an unknown calendar", { settings: { ...stored, calendars: ["julian"] } }],
   ])("returns null and leaves the mirror alone for %s", async (_name, result) => {
     sync.get.mockResolvedValue(result);

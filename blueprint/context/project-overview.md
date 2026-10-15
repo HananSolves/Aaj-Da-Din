@@ -1,6 +1,6 @@
 # Aaj Da Din - Project Overview
 
-<!-- blueprint:source-hash a298052169471af982279a41a9d640e849cee6a2cc94a555d139b04717978c6e -->
+<!-- blueprint:source-hash 9f4a8866538b8b2a65f8c0e3d3920df1cd6f893a1bb445160c80fe27fd0c651e -->
 
 > A Punjabi new-tab browser extension (Chrome, Edge, Firefox): today's date in the calendars Punjabis use, today's and tomorrow's festivals, a daily photo of Punjab and a daily fact. Fast, private, open source, works offline.
 
@@ -85,14 +85,16 @@ No backend or database: bundled static data, a remote copy of it, and the user's
 
 ### Settings (`storage.sync`, mirrored to `localStorage` key `add:settings`)
 
-Existing in `src/settings/types.ts` (v1):
+Existing in `src/settings/types.ts` (schema 2):
 
-- `schemaVersion` (1) - bump on shape change and add a migration in `migrations.ts`
+- `schemaVersion` (2) - bump on shape change and add a migration in `migrations.ts`
 - `calendars` (`CalendarId[]`) - enabled calendars in display order; `CalendarId` = `gregorian | desi | bikrami | nanakshahi | hijri`
-- `theme` (string) - theme id
+- `theme` (`ThemeId`) - `chitta | raat | sarson | phulkari | mitti | neela`; with nothing stored, `prefers-color-scheme` picks `chitta` or `raat`
+- `dateStyle` (`list | centered | compact`) - layout only
+- `background` (`photo | solid`) - stored now, read by the photo layer (item 14); no visible effect before then
 - `hijriOffset` (-1 | 0 | 1) - labelled "Match your local mosque"
 
-Planned from plan §7.3 (exact names decided when built, items 8-12): date style, photo-or-solid mode, enabled festival sets, Gurpurab source (`sgpc | nanakshahi`), show Today/Tomorrow lines, show fact.
+Planned from plan §7.3 (exact names decided when built, items 10-12): enabled festival sets, Gurpurab source (`sgpc | nanakshahi`), show Today/Tomorrow lines, show fact.
 
 The store (item 8, `src/settings/{migrations,store}.ts`) keeps the whole `Settings` object in `storage.sync` under the single key `settings`. `parseSettings` validates it and the mirror alike (`parseMirror` is `null` for a missing or invalid value). Older schemas migrate in memory on read and are not written back; a newer schema is ignored (`null`), never overwritten; `saveSettings` writes `storage.sync` before the mirror. The new tab paints from the mirror, then re-renders if `storage.sync` differs. With no settings anywhere, v0 shows all five calendars and the cultural and Sikh sets, while `defaultSettings` keeps Gregorian + Desi + Nanakshahi as the skip-onboarding default.
 
@@ -174,7 +176,7 @@ Single page: the new tab (`entrypoints/newtab/`). Everything else is a lazy pane
 - **New tab** - date in the enabled calendars, Today/Tomorrow festival lines, daily photo with credit (bottom-right), daily fact, gradient behind text over photos
 - **Onboarding** (when no settings exist) - 1) welcome + calendar choice with live preview, 2) look (theme, date style, photo or solid) with live preview, 3) done: "You can change anything later in Settings ⚙". Skippable. Must show value immediately (Chrome/Edge show a "Change back?" prompt on the first new tab).
 - **Settings** - calendars on/off and order; look; festivals (sets, Gurpurab source, Hijri offset, Today/Tomorrow lines); fact on/off; Report a mistake / Suggest a feature (external form, URL placeholder); Support (Patreon); About (version, GPL-3.0 repo link, privacy policy, licences and photo credits, dates disclaimer)
-- **Look** - 6-8 themes (candidates: Sarson, Phulkari, Mitti, Neela, Raat, Chitta), 3 date styles, solid-colour mode; `prefers-color-scheme` sets the default theme
+- **Look** - 6 themes (Chitta, Raat, Sarson, Phulkari, Mitti, Neela; names and palettes still open), 3 date styles (List, Centered, Compact), solid-colour mode; `prefers-color-scheme` sets the default theme
 - **Accessibility (V1 requirement)** - WCAG 2.2 AA contrast on every theme; `<time datetime>` and full-text `aria-label`s on dates; keyboard-operable onboarding and settings with visible focus; `prefers-reduced-motion`; holds at 200% zoom; never colour alone; `lang` attributes set now for V2
 
 ## Deployment
@@ -202,7 +204,7 @@ Plan §10 items (resolve in the plans, then re-run `/overview`):
 
 Found while generating this overview:
 
-- **Settings code vs plan** - `Settings` (schema 1) has four fields; plan §7.3 needs more, added with items 9-12, each bumping `schemaVersion` with a migration step.
+- **Settings code vs plan** - `Settings` (schema 2) has six fields; plan §7.3 still needs festival sets, Gurpurab source and the Today/Tomorrow and fact toggles, added with items 10-12, each bumping `schemaVersion` with a migration step.
 - **Oversized items** - build-plan items 7 (photos + fact + sign-off checks) and 13 (content pipeline: CSVs, two scripts, filter, remote refresh) bundle several concerns; `/feature` may propose splitting them.
 - **Layout vs code** - plan §5.5 names `src/festivals/resolve.ts`; feature 5 built `rules.ts`, `festivals.ts` and `lines.ts`. Plan §5.5 lists `ui/` as lazy chunks; the eager date-row view-model is `src/ui/today.ts`.
 - **Domain** - no Cloudflare domain is named yet (needed for content URLs, privacy page and the Firefox ID).

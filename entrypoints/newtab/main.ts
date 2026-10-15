@@ -3,6 +3,7 @@ import { type FestivalLines, festivalLines } from "../../src/festivals/lines.ts"
 import { readMirror } from "../../src/settings/mirror.ts";
 import { loadSettings } from "../../src/settings/store.ts";
 import { type CalendarId, defaultSettings, type Settings } from "../../src/settings/types.ts";
+import { applyLook } from "../../src/themes/look.ts";
 import { todayRows } from "../../src/ui/today.ts";
 
 // With no settings anywhere, the page shows every calendar until onboarding exists (build-plan 12).
@@ -54,7 +55,7 @@ async function start(dates: HTMLElement, festivals: HTMLElement): Promise<void> 
   // storage.sync is the source of truth; the mirror may be a visit behind a change from another device.
   const synced = await loadSettings();
   if (synced && JSON.stringify(synced) !== JSON.stringify(painted)) {
-    document.documentElement.dataset.theme = synced.theme;
+    applyLook(synced);
     await renderDates(dates, synced, now);
   }
 }

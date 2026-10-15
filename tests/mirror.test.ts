@@ -3,9 +3,11 @@ import { parseMirror } from "../src/settings/mirror.ts";
 import { defaultSettings } from "../src/settings/types.ts";
 
 const valid = {
-  schemaVersion: 1,
+  schemaVersion: 2,
   calendars: ["hijri", "gregorian"],
-  theme: "dark",
+  theme: "raat",
+  dateStyle: "compact",
+  background: "solid",
   hijriOffset: 1,
 };
 const parse = (value: unknown) => parseMirror(JSON.stringify(value));
@@ -20,12 +22,23 @@ describe("parseMirror", () => {
     expect(parse({ ...valid, later: true })).toEqual({ ...valid, later: true });
   });
 
+  it("migrates a schema 1 mirror in memory", () => {
+    const v1 = { schemaVersion: 1, calendars: ["desi"], theme: "dark", hijriOffset: 0 };
+    expect(parse(v1)).toEqual({
+      ...v1,
+      schemaVersion: 2,
+      theme: "raat",
+      dateStyle: "list",
+      background: "photo",
+    });
+  });
+
   it.each([null, "", "not json", "{", "null", "[]", '"text"', "42"])("rejects %j", (raw) => {
     expect(parseMirror(raw)).toBeNull();
   });
 
   it.each([
-    ["a newer schemaVersion", { ...valid, schemaVersion: 2 }],
+    ["a newer schemaVersion", { ...valid, schemaVersion: 3 }],
     ["no schemaVersion", { ...valid, schemaVersion: undefined }],
     ["empty calendars", { ...valid, calendars: [] }],
     ["calendars that is not an array", { ...valid, calendars: "gregorian" }],
@@ -35,6 +48,9 @@ describe("parseMirror", () => {
     ["an offset out of range", { ...valid, hijriOffset: 2 }],
     ["an offset that is not a number", { ...valid, hijriOffset: "1" }],
     ["a non-string theme", { ...valid, theme: 3 }],
+    ["an unknown theme", { ...valid, theme: "light" }],
+    ["an unknown date style", { ...valid, dateStyle: "grid" }],
+    ["an unknown background", { ...valid, background: "video" }],
   ])("rejects %s", (_name, value) => {
     expect(parse(value)).toBeNull();
   });

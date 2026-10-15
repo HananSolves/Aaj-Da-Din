@@ -1,11 +1,20 @@
-import type { CalendarId, Settings } from "./types.ts";
+import { themeIds } from "../themes/themes.ts";
+import { backgrounds, type CalendarId, dateStyles, type Settings } from "./types.ts";
 
-export const currentSchemaVersion = 1;
+export const currentSchemaVersion = 2;
 
 /** Takes a value stored at schema `n` (the step at index `n - 1`) and returns it at schema `n + 1`. */
 export type MigrationStep = (stored: Record<string, unknown>) => Record<string, unknown>;
 
-export const migrations: MigrationStep[] = [];
+export const migrations: MigrationStep[] = [
+  // 1 to 2: the free-form theme became a known id; dateStyle and background are new.
+  (stored) => ({
+    ...stored,
+    theme: stored.theme === "dark" ? "raat" : "chitta",
+    dateStyle: "list",
+    background: "photo",
+  }),
+];
 
 const calendarIds: readonly string[] = [
   "gregorian",
@@ -16,14 +25,16 @@ const calendarIds: readonly string[] = [
 ] satisfies CalendarId[];
 
 function isCurrentShape(value: Record<string, unknown>, current: number): boolean {
-  const { schemaVersion, calendars, theme, hijriOffset } = value;
+  const { schemaVersion, calendars, theme, dateStyle, background, hijriOffset } = value;
   return (
     schemaVersion === current &&
     Array.isArray(calendars) &&
     calendars.length > 0 &&
     calendars.every((id) => typeof id === "string" && calendarIds.includes(id)) &&
     new Set(calendars).size === calendars.length &&
-    typeof theme === "string" &&
+    themeIds.some((id) => id === theme) &&
+    dateStyles.some((id) => id === dateStyle) &&
+    backgrounds.some((id) => id === background) &&
     (hijriOffset === -1 || hijriOffset === 0 || hijriOffset === 1)
   );
 }

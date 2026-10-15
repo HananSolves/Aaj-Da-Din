@@ -1,3 +1,6 @@
+import type { DateStyle } from "../settings/types.ts";
+import type { ThemeId } from "../themes/themes.ts";
+
 // All UI strings live here so other languages can be added later (project-plan §3.3).
 export const en = {
   today: "Today",
@@ -23,6 +26,19 @@ export const en = {
     nanakshahi: "Nanakshahi",
     hijri: "Hijri",
   },
+  themeNames: {
+    chitta: "Chitta (white)",
+    raat: "Raat (night)",
+    sarson: "Sarson (mustard)",
+    phulkari: "Phulkari",
+    mitti: "Mitti (earth)",
+    neela: "Neela (blue)",
+  } satisfies Record<ThemeId, string>,
+  dateStyleNames: {
+    list: "List",
+    centered: "Centered",
+    compact: "Compact",
+  } satisfies Record<DateStyle, string>,
   nanakshahiEra: "NS",
   adhik: "Adhik",
   sudi: "Sudi",

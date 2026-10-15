@@ -2,6 +2,7 @@
   --bg: #f6efe0;
   --fg: #2b2118;
   --muted: #6b5a47;
+  color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -9,19 +10,50 @@
     --bg: #14110e;
     --fg: #f1e8d6;
     --muted: #b3a48c;
+    color-scheme: dark;
   }
 }
 
-:root[data-theme="light"] {
+:root[data-theme="chitta"] {
   --bg: #f6efe0;
   --fg: #2b2118;
   --muted: #6b5a47;
+  color-scheme: light;
 }
 
-:root[data-theme="dark"] {
+:root[data-theme="raat"] {
   --bg: #14110e;
   --fg: #f1e8d6;
   --muted: #b3a48c;
+  color-scheme: dark;
+}
+
+:root[data-theme="sarson"] {
+  --bg: #f2c230;
+  --fg: #2b2118;
+  --muted: #5a4410;
+  color-scheme: light;
+}
+
+:root[data-theme="phulkari"] {
+  --bg: #8e2a5a;
+  --fg: #fff1e6;
+  --muted: #f3cfdc;
+  color-scheme: dark;
+}
+
+:root[data-theme="mitti"] {
+  --bg: #7a4e32;
+  --fg: #fbf1e4;
+  --muted: #ecd5bd;
+  color-scheme: dark;
+}
+
+:root[data-theme="neela"] {
+  --bg: #1f4e8c;
+  --fg: #f1f6ff;
+  --muted: #bcd3f2;
+  color-scheme: dark;
 }
 
 html,
@@ -65,11 +97,11 @@ body {
 .label {
   color: var(--muted);
   font-size: 0.875rem;
-  min-width: 6rem;
+  min-width: var(--label-width, 6rem);
 }
 
 #dates li:first-child .label {
-  font-size: 1rem;
+  font-size: var(--first-label-size, 1rem);
 }
 
 #festivals {
@@ -83,4 +115,31 @@ body {
 
 #festivals .tomorrow {
   color: var(--muted);
+}
+
+[data-date-style="centered"] #app {
+  text-align: center;
+}
+
+[data-date-style="centered"] #dates {
+  --label-width: 0;
+  gap: 1rem;
+}
+
+[data-date-style="centered"] #dates li {
+  flex-direction: column;
+  align-items: center;
+}
+
+[data-date-style="compact"] #dates {
+  --label-width: 0;
+  --first-label-size: 0.875rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.5rem;
+}
+
+[data-date-style="compact"] #dates li,
+[data-date-style="compact"] #dates li:first-child {
+  font-size: 1rem;
 }

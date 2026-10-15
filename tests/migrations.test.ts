@@ -3,9 +3,11 @@ import { type MigrationStep, parseSettings } from "../src/settings/migrations.ts
 import { defaultSettings } from "../src/settings/types.ts";
 
 const valid = {
-  schemaVersion: 1,
+  schemaVersion: 2,
   calendars: ["hijri", "gregorian"],
-  theme: "dark",
+  theme: "raat",
+  dateStyle: "centered",
+  background: "solid",
   hijriOffset: 1,
 };
 
@@ -24,11 +26,11 @@ describe("parseSettings", () => {
   });
 
   it.each([
-    ["a newer schemaVersion", { ...valid, schemaVersion: 2 }],
+    ["a newer schemaVersion", { ...valid, schemaVersion: 3 }],
     ["no schemaVersion", { ...valid, schemaVersion: undefined }],
     ["schemaVersion 0", { ...valid, schemaVersion: 0 }],
     ["a fractional schemaVersion", { ...valid, schemaVersion: 1.5 }],
-    ["a string schemaVersion", { ...valid, schemaVersion: "1" }],
+    ["a string schemaVersion", { ...valid, schemaVersion: "2" }],
     ["empty calendars", { ...valid, calendars: [] }],
     ["calendars that is not an array", { ...valid, calendars: "gregorian" }],
     ["an unknown calendar", { ...valid, calendars: ["gregorian", "julian"] }],
@@ -37,42 +39,83 @@ describe("parseSettings", () => {
     ["an offset out of range", { ...valid, hijriOffset: 2 }],
     ["an offset that is not a number", { ...valid, hijriOffset: "1" }],
     ["a non-string theme", { ...valid, theme: 3 }],
+    ["an unknown theme", { ...valid, theme: "light" }],
+    ["a missing theme", { ...valid, theme: undefined }],
+    ["an unknown date style", { ...valid, dateStyle: "grid" }],
+    ["a missing date style", { ...valid, dateStyle: undefined }],
+    ["an unknown background", { ...valid, background: "video" }],
+    ["a missing background", { ...valid, background: undefined }],
   ])("rejects %s", (_name, value) => {
     expect(parseSettings(value)).toBeNull();
   });
 });
 
-describe("parseSettings migrations", () => {
+describe("parseSettings 1 to 2", () => {
+  const v1 = {
+    schemaVersion: 1,
+    calendars: ["hijri", "gregorian"],
+    theme: "dark",
+    hijriOffset: -1,
+  };
+
+  it("maps dark to raat and adds the new defaults, keeping the other fields", () => {
+    expect(parseSettings(v1)).toEqual({
+      ...v1,
+      schemaVersion: 2,
+      theme: "raat",
+      dateStyle: "list",
+      background: "photo",
+    });
+  });
+
+  it.each(["light", "sepia", "", 7, null])("maps theme %j to chitta", (theme) => {
+    expect(parseSettings({ ...v1, theme })?.theme).toBe("chitta");
+  });
+
+  it("maps a missing theme to chitta", () => {
+    const { theme: _theme, ...withoutTheme } = v1;
+    expect(parseSettings(withoutTheme)?.theme).toBe("chitta");
+  });
+
+  it("still rejects a v1 value whose other fields are invalid", () => {
+    expect(parseSettings({ ...v1, calendars: [] })).toBeNull();
+    expect(parseSettings({ ...v1, hijriOffset: 2 })).toBeNull();
+  });
+});
+
+describe("parseSettings migration runner", () => {
   const trail: string[] = [];
   const steps: MigrationStep[] = [
-    (stored) => {
-      trail.push("1to2");
-      return { ...stored, theme: `${String(stored.theme)}-v2` };
-    },
+    (stored) => stored,
     (stored) => {
       trail.push("2to3");
-      return { ...stored, theme: `${String(stored.theme)}-v3` };
+      return { ...stored, note: `${String(stored.note)}-v3` };
+    },
+    (stored) => {
+      trail.push("3to4");
+      return { ...stored, note: `${String(stored.note)}-v4` };
     },
   ];
+  const v2 = { ...valid, note: "n" };
 
   it("runs every step from the stored version, in order", () => {
     trail.length = 0;
-    const result = parseSettings(valid, steps, 3);
-    expect(trail).toEqual(["1to2", "2to3"]);
-    expect(result).toEqual({ ...valid, schemaVersion: 3, theme: "dark-v2-v3" });
+    const result = parseSettings(v2, steps, 4);
+    expect(trail).toEqual(["2to3", "3to4"]);
+    expect(result).toEqual({ ...v2, schemaVersion: 4, note: "n-v3-v4" });
   });
 
   it("runs only the steps after the stored version", () => {
     trail.length = 0;
-    const result = parseSettings({ ...valid, schemaVersion: 2 }, steps, 3);
-    expect(trail).toEqual(["2to3"]);
-    expect(result).toEqual({ ...valid, schemaVersion: 3, theme: "dark-v3" });
+    const result = parseSettings({ ...v2, schemaVersion: 3 }, steps, 4);
+    expect(trail).toEqual(["3to4"]);
+    expect(result).toEqual({ ...v2, schemaVersion: 4, note: "n-v4" });
   });
 
   it("does not mutate the stored value", () => {
-    const stored = { ...valid };
-    parseSettings(stored, steps, 3);
-    expect(stored).toEqual(valid);
+    const stored = { ...v2 };
+    parseSettings(stored, steps, 4);
+    expect(stored).toEqual(v2);
   });
 
   it("is null when a step throws", () => {
@@ -81,15 +124,15 @@ describe("parseSettings migrations", () => {
         throw new Error("bad data");
       },
     ];
-    expect(parseSettings(valid, broken, 2)).toBeNull();
+    expect(parseSettings({ ...valid, schemaVersion: 1 }, broken, 2)).toBeNull();
   });
 
   it("is null when a step output fails the shape check", () => {
     const bad: MigrationStep[] = [(stored) => ({ ...stored, calendars: [] })];
-    expect(parseSettings(valid, bad, 2)).toBeNull();
+    expect(parseSettings({ ...valid, schemaVersion: 1 }, bad, 2)).toBeNull();
   });
 
   it("is null when a step is missing", () => {
-    expect(parseSettings(valid, [], 2)).toBeNull();
+    expect(parseSettings({ ...valid, schemaVersion: 1 }, [], 2)).toBeNull();
   });
 });
