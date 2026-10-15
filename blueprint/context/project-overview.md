@@ -1,6 +1,6 @@
 # Aaj Da Din - Project Overview
 
-<!-- blueprint:source-hash 49134ddb492486723937f552c7f1b01c3933bb9e77b71ff8e16d378eea7e742e -->
+<!-- blueprint:source-hash a808c3c9a9ecb7c512141306fc84bc38bcb99503b3b1680d07886851c56fefcf -->
 
 > A Punjabi new-tab browser extension (Chrome, Edge, Firefox): today's date in the calendars Punjabis use, today's and tomorrow's festivals, a daily photo of Punjab and a daily fact. Fast, private, open source, works offline.
 
@@ -37,7 +37,7 @@ Current milestone: **v0**. Scaffold, CI, size check and the Gregorian formatter 
 2. **Hijri calendar** - umm al-Qura via `Intl`, user offset -1/0/+1.
 3. **Desi and Bikrami data build** - `scripts/build-calendar.ts` (astronomy-engine, dev-only) emits per-year JSON for 2026-2036, checked against the SGPC jantri and a panchang.
 4. **Desi and Bikrami lookups** - read the current year's file (next year's in late December); resolves the sangrand-day and adhik-month questions.
-5. **Festival resolver (cultural + Sikh)** - "Today:" / "Tomorrow:" lines using SGPC dates.
+5. **Festival resolver (cultural + Sikh)** - festival rules over the calendar lookups, and "Today:" / "Tomorrow:" lines using SGPC dates.
 6. **Bare new tab** - five calendars, festival lines, one theme, solid background, instant paint from the settings mirror.
 7. **Bundled photos and placeholder fact** - 2-3 photos with credit, one fact, daily selection, v0 sign-off checks.
 
@@ -75,6 +75,7 @@ Current milestone: **v0**. Scaffold, CI, size check and the Gregorian formatter 
 - **Bikrami (lunisolar, Purnimanta):** Punjabi month names, then paksha and day, then Samvat (`Assu Vadi 1, Samvat 2083`). Tithi is read at sunrise: 1-15 is Sudi, 16-30 is Vadi (day = tithi - 15). An adhik month takes an `Adhik` prefix (`Adhik Jeth Sudi 3`). Samvat = Gregorian + 57 from Chaitra Shukla 1 (the day Pratipada begins, 19 March 2026), + 56 before; in an adhik-Chaitra year (2029) it turns in the nija month, as Drik Panchang dates it.
 - **Date rules:** published (jantri/IST) date used wherever the user is; day changes at local midnight; no geolocation; Hijri shows the civil-day date, not sunset-based.
 - **Festival sets:** Punjabi cultural (always on: Lohri, Maghi, Basant Panchami, Vaisakhi, Teeyan); Sikh (Prakash/Shaheedi Purabs, Khalsa Sajna Divas, Bandi Chhor Divas, Hola Mohalla, Gurgaddi days, Shaheedi Jor Mela); Hindu (Maha Shivratri, Holi, Ram Navami, Raksha Bandhan, Janmashtami, Dussehra, Karva Chauth, Diwali); Muslim (Ramadan begins, Eid al-Fitr, Eid al-Adha, Islamic New Year, Ashura; labelled "expected"). Neutrality: celebrated or observed days only, no political anniversaries. Gurpurab dates default to the SGPC jantri, switchable to Original Nanakshahi, source labelled.
+- **Festival dating:** each festival is a rule over the lookups: a fixed date, a sangrand (Lohri is the day before Maghi), a Bikrami tithi in the nija month, or a list of sourced dates where the sunrise tithi cannot give the SGPC date (Bandi Chhor Divas, so it shows only for sourced years). A tithi at two sunrises counts on the first day, and one at no sunrise on the day it begins. A sweep over 2026-2036 guards the gaps.
 - **Defaults from onboarding calendars:** Nanakshahi -> Sikh, Bikrami -> Hindu, Hijri -> Muslim. Skipping onboarding applies Gregorian + Desi + Nanakshahi, default theme, photo on.
 - **Correctness:** tested against SGPC jantri / panchang fixtures. Never "fix" a date without a source.
 
@@ -187,7 +188,7 @@ Single page: the new tab (`entrypoints/newtab/`). Everything else is a lazy pane
 
 Plan §10 items (resolve in the plans, then re-run `/overview`):
 
-- [ ] **SGPC jantri 2026-2027** - collect as test fixtures.
+- [ ] **SGPC jantri 2026-2027** - collect as test fixtures. Feature 5's fixtures come from secondary reproductions of the Nanakshahi 558 jantri (to 14 Mar 2027), so a copy of the jantri itself, and jantri 559, are still to be read.
 - [ ] **Muslim set** - include Mawlid / Eid Milad-un-Nabi and Shab-e-Barat?
 - [ ] **Clock** - should the page also show the time?
 - [ ] **Uninstall feedback form** via `runtime.setUninstallURL` - yes or no?
@@ -202,4 +203,5 @@ Found while generating this overview:
 - **No explicit problem statement** in `project-plan.md` §1 (see TODO under Problem).
 - **Settings code vs plan** - `Settings` in code has four fields; plan §7.3 needs several more. Feature 6 already reads the mirror, but the Settings store is item 8, so item 6 will use a minimal settings shape until then.
 - **Oversized items** - build-plan items 7 (photos + fact + sign-off checks) and 13 (content pipeline: CSVs, two scripts, filter, remote refresh) bundle several concerns; `/feature` may propose splitting them.
+- **Layout vs code** - plan §5.5 names `src/festivals/resolve.ts`; feature 5 built `rules.ts`, `festivals.ts` and `lines.ts`.
 - **Domain** - no Cloudflare domain is named yet (needed for content URLs, privacy page and the Firefox ID).
