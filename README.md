@@ -4,7 +4,7 @@ A Punjabi new-tab extension for Chrome, Edge and Firefox: today's date in the ca
 
 **Open source (GPL-3.0) · No tracking · No accounts · Works offline**
 
-Scope, versions and decisions live in [docs/PLAN.md](docs/PLAN.md). Current milestone: **v0**.
+Scope, versions and decisions live in [blueprint/project-plan.md](blueprint/project-plan.md). Current milestone: **v0**.
 
 ## Develop
 

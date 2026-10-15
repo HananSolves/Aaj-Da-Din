@@ -13,7 +13,8 @@ photos-src/
 # Local tooling (machine-specific)
 .fallow/
 .vscode/
-.claude/settings.local.json
+.claude/
+.agents/
 web-ext.config.ts
 
 # Logs, OS junk, secrets

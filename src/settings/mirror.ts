@@ -1,7 +1,7 @@
 import type { Settings } from "./types.ts";
 
 // localStorage mirror of the settings for instant first paint.
-// storage.sync stays the source of truth (PLAN §9).
+// storage.sync stays the source of truth (project-plan §4.2).
 const KEY = "add:settings";
 
 export function readMirror(): Settings | null {

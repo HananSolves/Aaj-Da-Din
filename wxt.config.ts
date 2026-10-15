@@ -1,6 +1,6 @@
 import { defineConfig } from "wxt";
 
-// Plan §3 Step 0: MV3 for every browser, `storage` only, no background script,
+// project-plan §3.2 Step 0: MV3 for every browser, `storage` only, no background script,
 // no host permissions. The newtab entrypoint becomes chrome_url_overrides.newtab.
 export default defineConfig({
   manifestVersion: 3,

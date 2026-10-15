@@ -1,4 +1,4 @@
-// Create the formatter once and reuse it (PLAN §9, performance rules).
+// Create the formatter once and reuse it (project-plan §5.2, performance rules).
 const formatter = new Intl.DateTimeFormat("en-GB", {
   day: "numeric",
   month: "long",

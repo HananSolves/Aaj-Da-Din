@@ -1,4 +1,4 @@
-// Size-budget check (PLAN §9). Run after `pnpm build` / `pnpm build:firefox`.
+// Size-budget check (project-plan §5.3). Run after `pnpm build` / `pnpm build:firefox`.
 // Budgets here are for the whole package; refine to "initial JS" once lazy chunks exist.
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { extname, join } from "node:path";
