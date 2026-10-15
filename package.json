@@ -23,8 +23,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "size": "node scripts/check-size.ts",
+    "check:manifest": "node scripts/check-manifest.ts",
     "build:calendar": "node scripts/build-calendar.ts",
-    "check": "pnpm typecheck && pnpm lint && pnpm test && pnpm build && pnpm build:firefox && pnpm size"
+    "check:calendar": "node scripts/build-calendar.ts --check",
+    "check": "pnpm typecheck && pnpm lint && pnpm test && pnpm check:calendar && pnpm build && pnpm build:firefox && pnpm size && pnpm check:manifest"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.15",

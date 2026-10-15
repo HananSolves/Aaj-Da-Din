@@ -64,10 +64,14 @@ Package manager: pnpm (Node 22.18+). Run commands from the project root.
 - Typecheck: `pnpm typecheck`
 - Lint: `pnpm lint` (Biome); auto-fix and format with `pnpm format`
 - Test: `pnpm test` (Vitest, `tests/**/*.test.ts`); watch mode `pnpm test:watch`
-- Size budgets: `pnpm size` (run after both builds)
-- Calendar data: `pnpm build:calendar`
-- Verify: `pnpm check` (typecheck, lint, test, both builds, size budgets). The
-  GitHub workflow `.github/workflows/ci.yml` runs the same steps individually.
+- Size budgets: `pnpm size` (run after both builds; fails if a build is missing)
+- Manifest permissions: `pnpm check:manifest` (run after both builds; `storage` only,
+  no background, host or content scripts)
+- Calendar data: `pnpm build:calendar`; `pnpm check:calendar` fails if the committed
+  `data/calendar/*.json` differs from the generator output
+- Verify: `pnpm check` (typecheck, lint, test, calendar data check, both builds, size
+  budgets, manifest check). The GitHub workflow `.github/workflows/ci.yml` runs the
+  same steps individually; keep the two in sync.
 
 There is no dev server URL: this is a browser extension. Load it unpacked from the
 build output folders above (Chrome/Edge) or via `about:debugging` (Firefox).

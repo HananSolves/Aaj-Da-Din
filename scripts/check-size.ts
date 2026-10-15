@@ -27,7 +27,8 @@ for (const dir of outputs) {
   try {
     files = walk(dir);
   } catch {
-    console.log(`skip ${dir} (not built)`);
+    console.log(`FAIL ${dir} (not built; run pnpm build and pnpm build:firefox first)`);
+    failed = true;
     continue;
   }
 
