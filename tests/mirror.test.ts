@@ -1,0 +1,41 @@
+import { describe, expect, it } from "vitest";
+import { parseMirror } from "../src/settings/mirror.ts";
+import { defaultSettings } from "../src/settings/types.ts";
+
+const valid = {
+  schemaVersion: 1,
+  calendars: ["hijri", "gregorian"],
+  theme: "dark",
+  hijriOffset: 1,
+};
+const parse = (value: unknown) => parseMirror(JSON.stringify(value));
+
+describe("parseMirror", () => {
+  it("returns a valid mirror unchanged", () => {
+    expect(parse(valid)).toEqual(valid);
+    expect(parse(defaultSettings)).toEqual(defaultSettings);
+  });
+
+  it("keeps extra fields", () => {
+    expect(parse({ ...valid, later: true })).toEqual({ ...valid, later: true });
+  });
+
+  it.each([null, "", "not json", "{", "null", "[]", '"text"', "42"])("rejects %j", (raw) => {
+    expect(parseMirror(raw)).toBeNull();
+  });
+
+  it.each([
+    ["a newer schemaVersion", { ...valid, schemaVersion: 2 }],
+    ["no schemaVersion", { ...valid, schemaVersion: undefined }],
+    ["empty calendars", { ...valid, calendars: [] }],
+    ["calendars that is not an array", { ...valid, calendars: "gregorian" }],
+    ["an unknown calendar", { ...valid, calendars: ["gregorian", "julian"] }],
+    ["a non-string calendar", { ...valid, calendars: [1] }],
+    ["a duplicate calendar", { ...valid, calendars: ["desi", "desi"] }],
+    ["an offset out of range", { ...valid, hijriOffset: 2 }],
+    ["an offset that is not a number", { ...valid, hijriOffset: "1" }],
+    ["a non-string theme", { ...valid, theme: 3 }],
+  ])("rejects %s", (_name, value) => {
+    expect(parse(value)).toBeNull();
+  });
+});

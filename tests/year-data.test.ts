@@ -1,6 +1,11 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { type CalendarYear, loadCalendarYear, locate } from "../src/calendars/year-data.ts";
+import {
+  type CalendarYear,
+  loadCalendarYear,
+  localIso,
+  locate,
+} from "../src/calendars/year-data.ts";
 
 const years = Array.from({ length: 11 }, (_, i) => 2026 + i);
 
@@ -51,5 +56,16 @@ describe("locate", () => {
 
   it("throws when the data is for a different year", () => {
     expect(() => locate(new Date(2027, 0, 1), data2026)).toThrow(RangeError);
+  });
+});
+
+describe("localIso", () => {
+  it("gives the local date just after and just before midnight", () => {
+    expect(localIso(new Date(2026, 9, 15, 0, 30))).toBe("2026-10-15");
+    expect(localIso(new Date(2026, 9, 15, 23, 59))).toBe("2026-10-15");
+  });
+
+  it("zero-pads the month and day", () => {
+    expect(localIso(new Date(2026, 0, 5))).toBe("2026-01-05");
   });
 });

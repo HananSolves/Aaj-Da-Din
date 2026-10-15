@@ -16,6 +16,13 @@ export const en = {
     "Magh",
     "Phagun",
   ],
+  calendarNames: {
+    gregorian: "Gregorian",
+    desi: "Desi",
+    bikrami: "Bikrami",
+    nanakshahi: "Nanakshahi",
+    hijri: "Hijri",
+  },
   nanakshahiEra: "NS",
   adhik: "Adhik",
   sudi: "Sudi",

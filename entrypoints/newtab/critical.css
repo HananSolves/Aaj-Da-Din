@@ -1,23 +1,27 @@
 :root {
   --bg: #f6efe0;
   --fg: #2b2118;
+  --muted: #6b5a47;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #14110e;
     --fg: #f1e8d6;
+    --muted: #b3a48c;
   }
 }
 
 :root[data-theme="light"] {
   --bg: #f6efe0;
   --fg: #2b2118;
+  --muted: #6b5a47;
 }
 
 :root[data-theme="dark"] {
   --bg: #14110e;
   --fg: #f1e8d6;
+  --muted: #b3a48c;
 }
 
 html,
@@ -29,12 +33,54 @@ body {
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
+/* Anchored to the top, not centred, so the festival lines arriving later cannot move the dates. */
 #app {
+  box-sizing: border-box;
   min-height: 100%;
-  display: grid;
-  place-items: center;
+  padding: clamp(2rem, 14vh, 8rem) 1.5rem 2rem;
+  max-width: 48rem;
+  margin: 0 auto;
 }
 
-#date {
+#dates {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+#dates li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 0.75rem;
+  font-size: 1.25rem;
+}
+
+#dates li:first-child {
   font-size: clamp(2rem, 6vw, 4rem);
+}
+
+.label {
+  color: var(--muted);
+  font-size: 0.875rem;
+  min-width: 6rem;
+}
+
+#dates li:first-child .label {
+  font-size: 1rem;
+}
+
+#festivals {
+  margin-top: 2rem;
+}
+
+#festivals p {
+  margin: 0 0 0.5rem;
+  font-size: 1.125rem;
+}
+
+#festivals .tomorrow {
+  color: var(--muted);
 }

@@ -18,6 +18,13 @@ export async function loadCalendarYear(year: number): Promise<CalendarYear | und
   return loaders[`../../data/calendar/${year}.json`]?.();
 }
 
+/** The local calendar date of `date` as YYYY-MM-DD (not the UTC date, which differs near midnight). */
+export function localIso(date: Date): string {
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${date.getFullYear()}-${month}-${day}`;
+}
+
 /** Finds the local calendar date of `date` in the data for its own Gregorian year. */
 export function locate(date: Date, data: CalendarYear): DayLocation {
   if (Number.isNaN(date.getTime())) {
@@ -29,7 +36,7 @@ export function locate(date: Date, data: CalendarYear): DayLocation {
   }
   const month = date.getMonth();
   const day = date.getDate();
-  const iso = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+  const iso = localIso(date);
   // UTC keeps the day count exact across daylight-saving changes.
   const dayIndex = Math.round((Date.UTC(year, month, day) - Date.UTC(year, 0, 1)) / 86_400_000);
   return { iso, dayIndex };

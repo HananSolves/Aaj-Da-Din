@@ -524,3 +524,4 @@ Established facts only. No expected user count is set; the sponsor-tile decision
 | CI now (GitHub Actions); release/store-publish automation only after the first manual submissions | ✅ Decided |
 | Firefox ID: placeholder until the first AMO upload; never a personal email | ✅ Decided |
 | Photo originals: gitignored `photos-src/<id>.<ext>`, re-fetchable from `photos.csv`; only optimised AVIFs are committed | ✅ Decided |
+| v0 new tab shows all five calendars when no settings mirror exists, while `defaultSettings` keeps Gregorian + Desi + Nanakshahi as the skip-onboarding default; an invalid mirror counts as none | ✅ Decided |

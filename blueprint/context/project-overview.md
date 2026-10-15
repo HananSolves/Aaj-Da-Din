@@ -1,6 +1,6 @@
 # Aaj Da Din - Project Overview
 
-<!-- blueprint:source-hash a808c3c9a9ecb7c512141306fc84bc38bcb99503b3b1680d07886851c56fefcf -->
+<!-- blueprint:source-hash f0871e19678ccb2a7919b1c932a86f778fb4af29aad86b503b39089ecf662ffe -->
 
 > A Punjabi new-tab browser extension (Chrome, Edge, Firefox): today's date in the calendars Punjabis use, today's and tomorrow's festivals, a daily photo of Punjab and a daily fact. Fast, private, open source, works offline.
 
