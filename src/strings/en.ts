@@ -2,4 +2,19 @@
 export const en = {
   today: "Today",
   tomorrow: "Tomorrow",
+  nanakshahiMonths: [
+    "Chet",
+    "Vaisakh",
+    "Jeth",
+    "Harh",
+    "Sawan",
+    "Bhadon",
+    "Assu",
+    "Katak",
+    "Maghar",
+    "Poh",
+    "Magh",
+    "Phagun",
+  ],
+  nanakshahiEra: "NS",
 } as const;
