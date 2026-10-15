@@ -1,6 +1,6 @@
 # Aaj Da Din - Project Overview
 
-<!-- blueprint:source-hash f0871e19678ccb2a7919b1c932a86f778fb4af29aad86b503b39089ecf662ffe -->
+<!-- blueprint:source-hash a298052169471af982279a41a9d640e849cee6a2cc94a555d139b04717978c6e -->
 
 > A Punjabi new-tab browser extension (Chrome, Edge, Firefox): today's date in the calendars Punjabis use, today's and tomorrow's festivals, a daily photo of Punjab and a daily fact. Fast, private, open source, works offline.
 
@@ -10,7 +10,7 @@ _Generated from `blueprint/project-plan.md` and `blueprint/build-plan.md`. Do no
 
 Punjabis, East and West, Sikh, Hindu and Muslim, follow several calendars at once, and a browser's new tab shows none of the Punjabi ones. Aaj Da Din replaces the new tab with today's date in those calendars, nearby festivals, a Punjab photo and a fact. The new tab opens constantly, so it must also be fast, small and trustworthy: no tracking, minimum permissions, open source.
 
-> TODO: the plan states the product and principles but no explicit problem statement; this paragraph is a distillation. Confirm or sharpen it in plan §1.
+> TODO: the plan has no explicit problem statement; this paragraph is a distillation. Confirm or sharpen it in plan §1.
 
 Guiding principles, in priority order: (1) fast and small, (2) private and trustworthy, (3) correct (a wrong date or fact costs more trust than a missing feature), (4) neutral and inclusive (East/West Punjab, all three faiths, no politics), (5) works offline from bundled data.
 
@@ -85,7 +85,7 @@ No backend or database: bundled static data, a remote copy of it, and the user's
 
 ### Settings (`storage.sync`, mirrored to `localStorage` key `add:settings`)
 
-Existing in `src/settings/types.ts` (v1): 
+Existing in `src/settings/types.ts` (v1):
 
 - `schemaVersion` (1) - bump on shape change and add a migration in `migrations.ts`
 - `calendars` (`CalendarId[]`) - enabled calendars in display order; `CalendarId` = `gregorian | desi | bikrami | nanakshahi | hijri`
@@ -93,6 +93,8 @@ Existing in `src/settings/types.ts` (v1):
 - `hijriOffset` (-1 | 0 | 1) - labelled "Match your local mosque"
 
 Planned from plan §7.3 (exact names decided when built, items 8-12): date style, photo-or-solid mode, enabled festival sets, Gurpurab source (`sgpc | nanakshahi`), show Today/Tomorrow lines, show fact.
+
+The store (item 8, `src/settings/{migrations,store}.ts`) keeps the whole `Settings` object in `storage.sync` under the single key `settings`. `parseSettings` validates it and the mirror alike (`parseMirror` is `null` for a missing or invalid value). Older schemas migrate in memory on read and are not written back; a newer schema is ignored (`null`), never overwritten; `saveSettings` writes `storage.sync` before the mirror. The new tab paints from the mirror, then re-renders if `storage.sync` differs. With no settings anywhere, v0 shows all five calendars and the cultural and Sikh sets, while `defaultSettings` keeps Gregorian + Desi + Nanakshahi as the skip-onboarding default.
 
 > Locked: `storage.sync` holds settings only (100 KB total, 8 KB per item). Once published, users' synced settings outlive releases, so `schemaVersion` and its migration path must keep working.
 
@@ -194,14 +196,13 @@ Plan §10 items (resolve in the plans, then re-run `/overview`):
 - [ ] **Uninstall feedback form** via `runtime.setUninstallURL` - yes or no?
 - [ ] **Patreon** - confirm Pakistan bank payout.
 - [ ] **Feedback form** - create it (Tally or Google Forms) and add the URL.
-- [ ] **Firefox add-on ID** - `wxt.config.ts` has placeholder `aajdadin@example.org`; replace with an address on a domain we own or a `{GUID}` before the first AMO upload, never a personal email (permanent once published).
+- [ ] **Firefox add-on ID** - `wxt.config.ts` has placeholder `aajdadin@example.org`; before the first AMO upload use an address on a domain we own or a `{GUID}`, never a personal email (permanent once published).
 - [ ] **Public contact address** - needed on the privacy page, or is the feedback form enough? Use a dedicated address if so.
 - [ ] **Theme names and palettes** - the candidate names above are not final.
 
 Found while generating this overview:
 
-- **No explicit problem statement** in `project-plan.md` §1 (see TODO under Problem).
-- **Settings code vs plan** - `Settings` in code has four fields; plan §7.3 needs several more. Feature 6 already reads the mirror, but the Settings store is item 8, so item 6 will use a minimal settings shape until then.
+- **Settings code vs plan** - `Settings` (schema 1) has four fields; plan §7.3 needs more, added with items 9-12, each bumping `schemaVersion` with a migration step.
 - **Oversized items** - build-plan items 7 (photos + fact + sign-off checks) and 13 (content pipeline: CSVs, two scripts, filter, remote refresh) bundle several concerns; `/feature` may propose splitting them.
-- **Layout vs code** - plan §5.5 names `src/festivals/resolve.ts`; feature 5 built `rules.ts`, `festivals.ts` and `lines.ts`.
+- **Layout vs code** - plan §5.5 names `src/festivals/resolve.ts`; feature 5 built `rules.ts`, `festivals.ts` and `lines.ts`. Plan §5.5 lists `ui/` as lazy chunks; the eager date-row view-model is `src/ui/today.ts`.
 - **Domain** - no Cloudflare domain is named yet (needed for content URLs, privacy page and the Firefox ID).
