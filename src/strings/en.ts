@@ -98,7 +98,7 @@ export const en = {
     close: "Close",
     saveFailed: "Could not save your settings. They will reset when you open a new tab.",
     newerVersion:
-      "These settings were saved by a newer version of Aaj Da Din. Update this browser's extension to change them.",
+      "These settings were saved by a newer version of Tarikh. Update this browser's extension to change them.",
     moved: (name: string, position: number, total: number) =>
       `${name} moved to position ${position} of ${total}`,
     sections: {
@@ -143,23 +143,23 @@ export const en = {
   },
   support: {
     section: "Support and feedback",
-    supportLink: "Support Aaj Da Din",
+    supportLink: "Support Tarikh",
     feedbackLink: "Report a mistake or suggest a feature",
-    cardLabel: "Support Aaj Da Din",
+    cardLabel: "Support Tarikh",
     dismiss: "Dismiss",
     messages: {
       vaisakhi: {
-        text: "Vaisakhi mubarak! Aaj Da Din is made by one person.",
+        text: "Vaisakhi mubarak! Tarikh is made by one person.",
         action: "Support it →",
       },
       eid: { text: "Eid mubarak! Free, private, no ads.", action: "Help keep it that way →" },
       general: [
         {
-          text: "Built by a Punjabi developer for Punjabis everywhere.",
+          text: "Built by one developer for South Asians everywhere.",
           action: "Support the project →",
         },
         {
-          text: "No tracking, no ads, ever. If Aaj Da Din brightens your day,",
+          text: "No tracking, no ads, ever. If Tarikh brightens your day,",
           action: "consider supporting it →",
         },
       ],

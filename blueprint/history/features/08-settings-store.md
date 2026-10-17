@@ -70,7 +70,7 @@ All are reversible and cheap to change in features 9 to 12.
   - **Done when:** `pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm build`, `pnpm build:firefox` and `pnpm size` pass, JS stays under 25 KB gzip, CSS under 8 KB, package under 100 KB, and both manifests still list only the `storage` permission.
 
 - [x] **4. Browser evidence and decision log.**
-  - Load `.output/chrome-mv3` unpacked and open a new tab. In the new tab's DevTools console run `chrome.storage.sync.set({ settings: { schemaVersion: 1, calendars: ["hijri", "gregorian"], theme: "dark", hijriOffset: 0 } })`, then reload twice. Observe: after the first reload the page renders from the old mirror then flips to the two rows (or already shows them), `localStorage["add:settings"]` equals the stored value, and the second reload paints it with no flash. Then store garbage and `schemaVersion: 2` and check the page keeps working with no console error and the mirror is unchanged. Repeat the basic set-and-reload check in Firefox if it can be driven here, otherwise mark it not run.
+  - Load `.output/chrome-mv3` unpacked and open a new tab. In the new tab's DevTools console run `chrome.storage.sync.set({ settings: { schemaVersion: 1, calendars: ["hijri", "gregorian"], theme: "dark", hijriOffset: 0 } })`, then reload twice. Observe: after the first reload the page renders from the old mirror then flips to the two rows (or already shows them), `localStorage["tarikh:settings"]` equals the stored value, and the second reload paints it with no flash. Then store garbage and `schemaVersion: 2` and check the page keeps working with no console error and the mirror is unchanged. Repeat the basic set-and-reload check in Firefox if it can be driven here, otherwise mark it not run.
   - Add one line to `blueprint/project-plan.md` §11 recording the store decisions above (sync is the source of truth, migrate on read without writing back, newer schema ignored, sync written before the mirror).
   - **Done when:** the observed results are written in the hand-over, each marked as observed or not run, and `pnpm check` passes once more.
 
@@ -100,7 +100,7 @@ export function loadSettings(): Promise<Settings | null>;
 export function saveSettings(settings: Settings): Promise<void>;
 ```
 
-- Stored in `storage.sync` under the single key `settings`: a `Settings` object. The mirror key stays `add:settings`.
+- Stored in `storage.sync` under the single key `settings`: a `Settings` object. The mirror key stays `tarikh:settings`.
 - `loadSettings` never writes to `storage.sync`. Only `saveSettings` does.
 - The new tab never throws to the console for a missing, invalid, newer or unreachable store.
 
@@ -136,7 +136,7 @@ Run or do:
 
 Expected:
 
-After the first reload the page shows only the Hijri and Gregorian rows on the dark theme. After the second reload it paints that way immediately, and `localStorage["add:settings"]` holds the same settings. Setting `settings` to a string, or to a value with `schemaVersion: 2`, leaves the page and the mirror unchanged.
+After the first reload the page shows only the Hijri and Gregorian rows on the dark theme. After the second reload it paints that way immediately, and `localStorage["tarikh:settings"]` holds the same settings. Setting `settings` to a string, or to a value with `schemaVersion: 2`, leaves the page and the mirror unchanged.
 
 This proves:
 

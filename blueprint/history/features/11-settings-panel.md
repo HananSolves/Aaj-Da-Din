@@ -22,8 +22,8 @@ All are cheap to change before 1.0.0; nothing has been published.
 - **Festival sets are any subset, including none**, kept in the canonical `festivalSets` order when saved. The Gurpurab source and the Hijri offset are always shown; they only change output when the matching set or calendar is on.
 - **Hijri offset control** is a three-way radio group (`-1`, `0`, `+1`) labelled with the plan's hint "Match your local mosque".
 - **No settings yet = start from what the page shows.** With no mirror the page shows all five calendars and all four sets (feature 6 decision). The panel opens on that state, so the first change does not make the page jump. That first change writes a full `Settings` object. Feature 12 (onboarding) decides what first run means; this feature does not.
-- **A newer-schema value in `storage.sync` is never overwritten.** `saveSettings` reads the stored value first and, if it is an object with an integer `schemaVersion` above the current one, rejects with `NewerSettingsError` without writing. The panel shows "These settings were saved by a newer version of Aaj Da Din. Update this browser's extension to change them." Garbage (anything else that fails validation) is overwritable.
-- **About block, partly deferred.** Included now: version (from `browser.runtime.getManifest().version`, no permission), "Open source (GPL-3.0)" linking to the repository `https://github.com/HananSolves/Aaj-Da-Din`. Deferred because their targets do not exist yet: the privacy policy link (feature 18, hosted page) and photo credits and licences (feature 14, no photos yet). Plan §7.3's "Report a mistake / Suggest a feature" and "Support Aaj Da Din" entries belong to feature 16 and are not in this panel.
+- **A newer-schema value in `storage.sync` is never overwritten.** `saveSettings` reads the stored value first and, if it is an object with an integer `schemaVersion` above the current one, rejects with `NewerSettingsError` without writing. The panel shows "These settings were saved by a newer version of Tarikh. Update this browser's extension to change them." Garbage (anything else that fails validation) is overwritable.
+- **About block, partly deferred.** Included now: version (from `browser.runtime.getManifest().version`, no permission), "Open source (GPL-3.0)" linking to the repository `https://github.com/HananSolves/Tarikh`. Deferred because their targets do not exist yet: the privacy policy link (feature 18, hosted page) and photo credits and licences (feature 14, no photos yet). Plan §7.3's "Report a mistake / Suggest a feature" and "Support Tarikh" entries belong to feature 16 and are not in this panel.
 
 ## In scope
 
@@ -125,7 +125,7 @@ export function openSettings(options: { settings: Settings; onChange: (next: Set
 ```
 
 - Migration 3 to 4 runs in memory on read and is not written back (feature 8). The migrated value reaches `storage.sync` the first time a person changes a setting.
-- `storage.sync` key stays `settings`, mirror key `add:settings`. Every panel save writes the whole object (about 300 bytes, far under the 8 KB item limit).
+- `storage.sync` key stays `settings`, mirror key `tarikh:settings`. Every panel save writes the whole object (about 300 bytes, far under the 8 KB item limit).
 - `onChange` is called before the save settles, so the page never waits on storage.
 - Stored settings are untrusted on read (`parseSettings`); the panel only ever builds `Settings` from validated state plus its own typed controls, and writes text with `textContent`.
 

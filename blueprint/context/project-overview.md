@@ -1,6 +1,6 @@
 # Tarikh - Project Overview
 
-<!-- blueprint:source-hash fa66f0dd24ec4bb2d998aa971f72571959183e97c823e3f1bfffe57a97cd4dce -->
+<!-- blueprint:source-hash e2d6ddc25dacfc8fca60e54576338bb029b85bbcd824a531f70ca67151ae20bc -->
 
 > A new-tab browser extension (Chrome, Edge, Firefox) for all of South Asia and its diaspora: today's date in the calendars a person follows, festivals for their communities, a daily photo of South Asia and a daily fact. Fast, private, open source, works offline.
 
@@ -8,7 +8,7 @@ _Generated from `blueprint/project-plan.md` and `blueprint/build-plan.md`. Do no
 
 ## Problem
 
-People from Afghanistan, Bangladesh, Bhutan, India, the Maldives, Nepal, Pakistan and Sri Lanka, at home and abroad, follow several calendars at once (national or regional, religious, Gregorian), and a browser's new tab shows none of them. Tarikh ("date"; formerly Aaj Da Din, a Punjabi-only new tab) shows each person their own calendars and festivals. The new tab opens constantly, so it must be fast, small and trustworthy.
+People from Afghanistan, Bangladesh, Bhutan, India, the Maldives, Nepal, Pakistan and Sri Lanka, at home and abroad, follow several calendars at once (national or regional, religious, Gregorian), and a browser's new tab shows none of them. Tarikh ("date") shows each person their own calendars and festivals. The new tab opens constantly, so it must be fast, small and trustworthy.
 
 Principles, in priority order: (1) fast and small, (2) private and trustworthy, (3) correct, every date has a published source, (4) neutral and inclusive across countries, religions and communities, never political or controversial (no disputed territories including Kashmir, wars, partitions, identity disputes, maps or borders), (5) works offline from bundled data.
 
@@ -89,7 +89,7 @@ Milestone: **v0**. Line order in `build-plan.md` is build order; numbers are sta
 
 No backend: bundled static data, a remote copy, and settings in the browser.
 
-### Settings (`storage.sync` key `settings`, mirrored to `localStorage` `add:settings`)
+### Settings (`storage.sync` key `settings`, mirrored to `localStorage` `tarikh:settings`)
 
 Schema 4 in `src/settings/types.ts`:
 

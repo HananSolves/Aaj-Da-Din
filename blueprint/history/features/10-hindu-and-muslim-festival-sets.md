@@ -143,7 +143,7 @@ export interface Festival { id: string; set: FestivalSet; rule: FestivalRule; or
 export interface FestivalQuery { sets: readonly FestivalSet[]; source?: GurpurabSource; hijriOffset?: HijriOffset }
 ```
 
-- `storage.sync` key stays `settings`, mirror key `add:settings`. A v1 or v2 value migrates in memory on read and is not written back.
+- `storage.sync` key stays `settings`, mirror key `tarikh:settings`. A v1 or v2 value migrates in memory on read and is not written back.
 - Hijri festivals still need the year's calendar file (the page loads it anyway), so a year with no file shows no lines.
 
 ## Testing

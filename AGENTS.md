@@ -12,14 +12,13 @@ for optional tool settings.
 
 ## What this is
 
-**Tarikh** ("date"; formerly Aaj Da Din) is a new-tab browser extension for
+**Tarikh** ("date") is a new-tab browser extension for
 Chrome, Edge and Firefox (MV3, built with WXT) for people from all of South Asia
 (Afghanistan, Bangladesh, Bhutan, India, Maldives, Nepal, Pakistan, Sri Lanka) and
 the diaspora. It shows today's date in the calendars the person follows, today's
 and tomorrow's festivals for the communities they pick, a daily photo of South Asia
 and a daily fact. Pitch: fast, private, open source, no tracking, works offline.
-Current milestone: **v0**. The code still says Aaj Da Din until build-plan item 20
-renames it.
+Current milestone: **v0**.
 
 ### Non-negotiables
 

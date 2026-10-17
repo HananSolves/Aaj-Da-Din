@@ -5,15 +5,15 @@ import { defineConfig } from "wxt";
 export default defineConfig({
   manifestVersion: 3,
   manifest: ({ browser }) => ({
-    name: "Aaj Da Din",
+    name: "Tarikh",
     description:
-      "A Punjabi new tab: today's date in Punjabi calendars, festivals, a daily photo and fact. No tracking.",
+      "A new tab for South Asia: today's date in the calendars you follow, festivals, a daily photo and fact. No tracking.",
     permissions: ["storage"],
     ...(browser === "firefox" && {
       browser_specific_settings: {
         gecko: {
           // TODO: replace with the permanent AMO id before the first Firefox upload.
-          id: "aajdadin@example.org",
+          id: "tarikh@example.org",
           strict_min_version: "140.0",
           // Not yet in WXT's manifest types.
           data_collection_permissions: { required: ["none"] },

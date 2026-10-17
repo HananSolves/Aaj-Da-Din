@@ -95,7 +95,7 @@ export function applyLook(settings: Pick<Settings, "theme" | "dateStyle" | "back
 ```
 
 - `<html>` attributes: `data-theme="<ThemeId>"`, `data-date-style="<DateStyle>"`, `data-background="photo|solid"`. Absent attributes mean the CSS defaults (OS-scheme theme, `list`).
-- `storage.sync` key stays `settings`, mirror key `add:settings`. A v1 value migrates in memory on read and is not written back.
+- `storage.sync` key stays `settings`, mirror key `tarikh:settings`. A v1 value migrates in memory on read and is not written back.
 
 ## Testing
 

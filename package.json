@@ -1,8 +1,8 @@
 {
-  "name": "aaj-da-din",
+  "name": "tarikh",
   "version": "0.0.1",
   "private": true,
-  "description": "Punjabi new-tab extension: today's date in Punjabi calendars, festivals, a daily photo and fact.",
+  "description": "New-tab extension for South Asia and the diaspora: today's date in the calendars you follow, festivals, a daily photo and fact.",
   "license": "GPL-3.0-only",
   "type": "module",
   "packageManager": "pnpm@11.20.0",

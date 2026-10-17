@@ -81,7 +81,7 @@ All are reversible and are cheap to change in features 8 and 9.
   - **Done when:** `pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm build`, `pnpm build:firefox` and `pnpm size` pass, and the output is still under the 25 KB JS, 8 KB CSS and 100 KB package budgets. The year-data chunks and the new page code are inside the JS number, so read it. The permissions in both manifests are still `storage` only.
 
 - [x] **4. Browser evidence and decision log.**
-  - Load `.output/chrome-mv3` unpacked in Chrome, open a new tab, and check: all five rows show in the right order with today's date, the console has no errors, and the themed background paints with no wrong-theme flash. Set `localStorage["add:settings"]` by hand in DevTools to a valid mirror with `theme: "dark"` and a shorter `calendars` list, reload, and check the theme and rows follow it. Then set it to garbage (and to a mirror with `schemaVersion: 2`) and check the page falls back to the five-calendar default.
+  - Load `.output/chrome-mv3` unpacked in Chrome, open a new tab, and check: all five rows show in the right order with today's date, the console has no errors, and the themed background paints with no wrong-theme flash. Set `localStorage["tarikh:settings"]` by hand in DevTools to a valid mirror with `theme: "dark"` and a shorter `calendars` list, reload, and check the theme and rows follow it. Then set it to garbage (and to a mirror with `schemaVersion: 2`) and check the page falls back to the five-calendar default.
   - Load `.output/firefox-mv3` through `about:debugging` and repeat the first check.
   - Festival lines show only on a festival day or the day before, and the date will not be one today, so do not claim to have seen a line in the browser unless one appeared. Their text and dates are covered by feature 5's tests.
   - Add one line to `blueprint/project-plan.md` §11 (match the existing entries) recording that v0 falls back to all five calendars when no mirror exists, while `defaultSettings` keeps the three-calendar skip-onboarding default.
@@ -117,7 +117,7 @@ export function todayRows(
 ): DateRow[];
 ```
 
-- No stored field is added or changed. The mirror key stays `add:settings` and its shape stays `Settings` v1.
+- No stored field is added or changed. The mirror key stays `tarikh:settings` and its shape stays `Settings` v1.
 - Rows never carry markup. The page sets text with `textContent`.
 - The page never throws to the console for a missing year file, a bad mirror, or missing Hijri data.
 

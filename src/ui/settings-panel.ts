@@ -9,7 +9,7 @@ import { themeIds } from "../themes/themes.ts";
 import "./settings-panel.css";
 
 const text = en.settings;
-const repositoryUrl = "https://github.com/HananSolves/Aaj-Da-Din";
+const repositoryUrl = "https://github.com/HananSolves/Tarikh";
 
 export interface SettingsPanelOptions {
   settings: Settings;

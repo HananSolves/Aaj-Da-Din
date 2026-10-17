@@ -4,7 +4,7 @@
 > If something here conflicts with code, this plan wins until it is deliberately
 > changed. Run `/overview` after changing it.
 >
-> **Scope change (2026-10-17):** the project began as **Aaj Da Din**, a Punjabi new tab. It is
+> **Scope change (2026-10-17):** the project began as a Punjabi new tab. It is
 > now **Tarikh**, for all of South Asia and its diaspora. v0 (§3.2) and the completed features
 > were built for the Punjabi calendars and stay valid as the engine's foundation. The decision
 > log (§11) keeps the earlier decisions; the pivot rows at its end take precedence where they
@@ -92,7 +92,7 @@ People from Afghanistan, Bangladesh, Bhutan, India, the Maldives, Nepal, Pakista
 Everything in v0, plus:
 
 #### Features
-- **Name: Tarikh.** Code, storage keys, manifests, strings and docs move from "Aaj Da Din" before launch (nothing is published yet, so this is free now).
+- **Name: Tarikh.** Code, storage keys, manifests, strings and docs all use the name Tarikh (done by feature 20; nothing was published under the earlier name).
 - **Onboarding**: minimal, 2-3 screens (see §7.2): pick communities, which pre-select calendars and festival sets. Everything is changeable later in Settings.
 - **Calendars**, any combination and order: every calendar in §3.4.1, including the Bhutanese, Sinhala and Parsi calendars.
 - **Communities** (§3.4.3): the person picks the traditions they follow; each one suggests calendars and festival sets. Religion is never asked directly.
@@ -530,7 +530,7 @@ Storage details: §4.2.
 - Build: `pnpm build` (Chrome/Edge, `.output/chrome-mv3`) and `pnpm build:firefox` (`.output/firefox-mv3`); store zips with `pnpm zip` / `pnpm zip:firefox`.
 - GitHub Actions runs typecheck → lint → test → build → size check. Release and store-publish automation comes only after the first manual submissions.
 - **Version numbers:** `package.json` `version` is the single source (WXT copies it into the manifest). The prototype uses `0.0.x`, the first store release is `1.0.0`, and later releases follow SemVer. A `CHANGELOG.md` (Keep a Changelog format) starts at `1.0.0`; until then git history is enough.
-- **Firefox add-on ID:** `wxt.config.ts` has a placeholder. The rename moves it to a Tarikh placeholder; replace it with the real ID before the first AMO upload (see §10).
+- **Firefox add-on ID:** `wxt.config.ts` has a placeholder. It is the Tarikh placeholder `tarikh@example.org`; replace it with the real ID before the first AMO upload (see §10).
 
 ### 8.3 Store submission checklist
 
@@ -591,9 +591,9 @@ Established facts only. No expected user count is set; the sponsor-tile decision
 - [ ] **Patreon:** confirm Pakistan bank payout at signup.
 - [ ] **Feedback form:** create it (Tally or Google Forms) and add the URL. `src/support/links.ts` points at the repository issues page until then.
 - [ ] **Patreon page URL:** `src/support/links.ts` holds `https://www.patreon.com/` as a placeholder for the Support link and the ask card. Create the page and set the real URL before the first store upload (feature 19).
-- [ ] **Firefox add-on ID:** `wxt.config.ts` has the placeholder `aajdadin@example.org`, renamed to a Tarikh placeholder by the rename feature. Replace it before the first AMO upload. The ID is public in the manifest and permanent (changing it later loses users' synced settings). Use `tarikh@<a domain we own>` or a `{GUID}`, **not** a personal email.
+- [ ] **Firefox add-on ID:** `wxt.config.ts` has the placeholder `tarikh@example.org`. Replace it before the first AMO upload. The ID is public in the manifest and permanent (changing it later loses users' synced settings). Use `tarikh@<a domain we own>` or a `{GUID}`, **not** a personal email.
 - [ ] **Name checks:** a light search (2026-10-17) found no extension or app called Tarikh. Before 1.0.0, check the three stores, a domain for the site and a basic trademark search.
-- [ ] **GitHub repository rename** (`HananSolves/Aaj-Da-Din` → Tarikh): decide when, during the rename feature. GitHub redirects the old URL.
+- [x] **GitHub repository rename:** the repository is now `HananSolves/Tarikh` and the in-app links use it. GitHub redirects the old URL.
 - [ ] **Public contact address:** decide whether the privacy page needs one, or the feedback form is enough. If an email is needed, use a dedicated address, not a personal one.
 - [ ] **Theme names and palettes:** current ids are Punjabi words (Chitta, Raat, Sarson, Phulkari, Mitti, Neela). Revisit the display names for the wider audience; the ids can stay.
 
@@ -639,7 +639,7 @@ Rows before "Scope: all of South Asia" predate the 2026-10-17 pivot; where they 
 | Support and feedback: `installDate` is written to `storage.local` by the first new tab that finds none (there is no background script); the Patreon ask is due 14 days after it and at least 30 days after `lastAskDate`, which is written when the card is shown (not when it is closed) and before it renders, so a failing write shows nothing; a missing or invalid stored date is rewritten as today and never asks, and a date in the future waits; on a due day a celebration today in the person's festival sets shows the card, a celebration in the next 3 days holds it back, and Shaheedi Purab Guru Arjan Dev Ji, Shaheedi Purab Guru Tegh Bahadur Ji and Ashura are quiet days that never show it; Vaisakhi and the two Eids get their own greeting and other days rotate the two general messages; the card is a lazy inline `<aside>` after the festival lines, loaded after the first frame and idle time; Settings gains one "Support and feedback" section (Support link, Report a mistake or suggest a feature); no setting turns the ask off; the Patreon link and the feedback link (the repository issues page) are placeholders to replace before 1.0.0 | ✅ Decided |
 | Accessibility pass: AA contrast on every theme is pinned by a test that parses `critical.css`; the Settings panel has `scroll-padding-top` so its sticky header never hides a focused control; its live regions stay rendered while empty; Dismiss on the ask card moves focus to the gear; the page's top padding never drops below the fixed gear at high zoom; onboarding gets the same checks when it lands | ✅ Decided |
 | **Scope: all of South Asia** (Afghanistan, Bangladesh, Bhutan, India, Maldives, Nepal, Pakistan, Sri Lanka) and the diaspora, not only Punjab (2026-10-17) | ✅ Decided |
-| **Name: Tarikh** ("date"; also "history"), replacing Aaj Da Din before launch | ✅ Decided |
+| **Name: Tarikh** ("date"; also "history") | ✅ Decided |
 | V1 ships every calendar in §3.4.1, including full Bhutanese, Sinhala and Parsi calendars, and every community and festival set; no phased regional launch | ✅ Decided |
 | People choose **communities** (cultural and linguistic, cross-border), which suggest calendars and festival sets; religion is never asked; everything stays editable | ✅ Decided |
 | **Reference place:** each calendar is computed for the place its almanac is published for; the day changes at the user's local midnight; no geolocation and no per-city computation in V1 | ✅ Decided |

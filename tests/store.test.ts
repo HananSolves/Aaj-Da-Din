@@ -5,7 +5,7 @@ import type { Settings } from "../src/settings/types.ts";
 const sync = vi.hoisted(() => ({ get: vi.fn(), set: vi.fn() }));
 vi.mock("wxt/browser", () => ({ browser: { storage: { sync } } }));
 
-const MIRROR_KEY = "add:settings";
+const MIRROR_KEY = "tarikh:settings";
 const stored: Settings = {
   schemaVersion: 4,
   calendars: ["hijri", "gregorian"],

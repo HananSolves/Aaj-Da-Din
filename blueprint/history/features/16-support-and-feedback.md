@@ -7,7 +7,7 @@
 
 ## Goal
 
-Give people a quiet way to support the project and to report a mistake, without ever getting in the way of the date. Two permanent links in Settings (Support Aaj Da Din, Report a mistake or suggest a feature), and a small inline Patreon ask card that follows plan §6: never a popup, first ask at least 14 days after install, at most once a month, closed with one click, never over the date, preferring a festival day when one is close, and no "I already support" button.
+Give people a quiet way to support the project and to report a mistake, without ever getting in the way of the date. Two permanent links in Settings (Support Tarikh, Report a mistake or suggest a feature), and a small inline Patreon ask card that follows plan §6: never a popup, first ask at least 14 days after install, at most once a month, closed with one click, never over the date, preferring a festival day when one is close, and no "I already support" button.
 
 The card is the only part with real logic (when to show it), so that logic is pure and unit-tested; the card and the panel section are small DOM code that loads lazily, so first paint and the initial bundle stay as they are.
 
@@ -23,7 +23,7 @@ All are cheap to change before 1.0.0; nothing has been published.
 - **Quiet days.** Shaheedi Purab Guru Arjan Dev Ji, Shaheedi Purab Guru Tegh Bahadur Ji and Ashura are never ask moments, and on those days no ask is shown at all (it waits for the next day). A donation ask on a day of mourning would break the "never guilt-tripping" tone rule.
 - **Messages.** Four fixed messages from plan §6. Vaisakhi and the two Eids get their own greeting ("Vaisakhi mubarak!", "Eid mubarak!"); every other day uses one of the two general messages, chosen by day number. There is no generic "`<festival>` mubarak" template, because it would produce wrong greetings (a Shaheedi Purab "mubarak"). Eid is labelled "expected" elsewhere because moon sighting moves it; the greeting is the same on either day.
 - **Settings link section.** One new Settings section, "Support and feedback", holds both links, placed between Fact and About.
-- **Placeholder URLs, flagged as a release blocker.** The Patreon page and the feedback form do not exist yet (plan §7.3 and §10 call the form URL a placeholder). The Patreon link points to `https://www.patreon.com/` and the feedback link to the repository's GitHub issues, `https://github.com/HananSolves/Aaj-Da-Din/issues`, which works today. Both live in one file so feature 19 replaces them in one place.
+- **Placeholder URLs, flagged as a release blocker.** The Patreon page and the feedback form do not exist yet (plan §7.3 and §10 call the form URL a placeholder). The Patreon link points to `https://www.patreon.com/` and the feedback link to the repository's GitHub issues, `https://github.com/HananSolves/Tarikh/issues`, which works today. Both live in one file so feature 19 replaces them in one place.
 - **No setting to turn the ask off.** Plan §6 and §7.3 have none, and the card is rare and one-click closable. Adding one is a product decision, so it is not added.
 
 ## In scope
