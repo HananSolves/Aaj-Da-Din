@@ -11,7 +11,7 @@ export type Background = (typeof backgrounds)[number];
 
 export interface Settings {
   /** Bump when the shape changes and add a migration in migrations.ts. */
-  schemaVersion: 3;
+  schemaVersion: 4;
   calendars: CalendarId[];
   theme: ThemeId;
   dateStyle: DateStyle;
@@ -19,10 +19,12 @@ export interface Settings {
   hijriOffset: -1 | 0 | 1;
   festivalSets: FestivalSet[];
   gurpurabSource: GurpurabSource;
+  showFestivalLines: boolean;
+  showFact: boolean;
 }
 
 export const defaultSettings: Settings = {
-  schemaVersion: 3,
+  schemaVersion: 4,
   calendars: ["gregorian", "desi", "nanakshahi"],
   theme: "chitta",
   dateStyle: "list",
@@ -30,4 +32,6 @@ export const defaultSettings: Settings = {
   hijriOffset: 0,
   festivalSets: ["cultural", "sikh"],
   gurpurabSource: "sgpc",
+  showFestivalLines: true,
+  showFact: true,
 };

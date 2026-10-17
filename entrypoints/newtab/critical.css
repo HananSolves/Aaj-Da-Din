@@ -143,3 +143,26 @@ body {
 [data-date-style="compact"] #dates li:first-child {
   font-size: 1rem;
 }
+
+#settings-open {
+  position: fixed;
+  top: 0.5rem;
+  right: 0.5rem;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+#settings-open:hover,
+#settings-open:focus-visible {
+  color: var(--fg);
+}
+
+#settings-open:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: -2px;
+}

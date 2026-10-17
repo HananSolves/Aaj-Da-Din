@@ -3,7 +3,7 @@ import { parseMirror } from "../src/settings/mirror.ts";
 import { defaultSettings } from "../src/settings/types.ts";
 
 const valid = {
-  schemaVersion: 3,
+  schemaVersion: 4,
   calendars: ["hijri", "gregorian"],
   theme: "raat",
   dateStyle: "compact",
@@ -11,6 +11,8 @@ const valid = {
   hijriOffset: 1,
   festivalSets: ["muslim"],
   gurpurabSource: "nanakshahi",
+  showFestivalLines: true,
+  showFact: false,
 };
 const parse = (value: unknown) => parseMirror(JSON.stringify(value));
 
@@ -28,22 +30,32 @@ describe("parseMirror", () => {
     const v1 = { schemaVersion: 1, calendars: ["desi"], theme: "dark", hijriOffset: 0 };
     expect(parse(v1)).toEqual({
       ...v1,
-      schemaVersion: 3,
+      schemaVersion: 4,
       theme: "raat",
       dateStyle: "list",
       background: "photo",
       festivalSets: ["cultural", "sikh"],
       gurpurabSource: "sgpc",
+      showFestivalLines: true,
+      showFact: true,
     });
   });
 
   it("migrates a schema 2 mirror in memory", () => {
-    const { festivalSets: _sets, gurpurabSource: _source, ...v2 } = valid;
+    const {
+      festivalSets: _sets,
+      gurpurabSource: _source,
+      showFestivalLines: _lines,
+      showFact: _fact,
+      ...v2
+    } = valid;
     expect(parse({ ...v2, schemaVersion: 2 })).toEqual({
       ...v2,
-      schemaVersion: 3,
+      schemaVersion: 4,
       festivalSets: ["cultural", "sikh"],
       gurpurabSource: "sgpc",
+      showFestivalLines: true,
+      showFact: true,
     });
   });
 
@@ -52,7 +64,7 @@ describe("parseMirror", () => {
   });
 
   it.each([
-    ["a newer schemaVersion", { ...valid, schemaVersion: 4 }],
+    ["a newer schemaVersion", { ...valid, schemaVersion: 5 }],
     ["no schemaVersion", { ...valid, schemaVersion: undefined }],
     ["empty calendars", { ...valid, calendars: [] }],
     ["calendars that is not an array", { ...valid, calendars: "gregorian" }],

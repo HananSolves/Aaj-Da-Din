@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { loadSettings, saveSettings } from "../src/settings/store.ts";
+import { loadSettings, NewerSettingsError, saveSettings } from "../src/settings/store.ts";
 import type { Settings } from "../src/settings/types.ts";
 
 const sync = vi.hoisted(() => ({ get: vi.fn(), set: vi.fn() }));
@@ -7,7 +7,7 @@ vi.mock("wxt/browser", () => ({ browser: { storage: { sync } } }));
 
 const MIRROR_KEY = "add:settings";
 const stored: Settings = {
-  schemaVersion: 3,
+  schemaVersion: 4,
   calendars: ["hijri", "gregorian"],
   theme: "raat",
   dateStyle: "centered",
@@ -15,6 +15,8 @@ const stored: Settings = {
   hijriOffset: 1,
   festivalSets: ["muslim", "cultural"],
   gurpurabSource: "nanakshahi",
+  showFestivalLines: false,
+  showFact: true,
 };
 const mirrored: Settings = { ...stored, calendars: ["desi"], theme: "chitta" };
 
@@ -42,7 +44,7 @@ describe("loadSettings", () => {
   it.each([
     ["nothing stored", {}],
     ["garbage", { settings: "garbage" }],
-    ["a newer schemaVersion", { settings: { ...stored, schemaVersion: 4 } }],
+    ["a newer schemaVersion", { settings: { ...stored, schemaVersion: 5 } }],
     ["an unknown calendar", { settings: { ...stored, calendars: ["julian"] } }],
   ])("returns null and leaves the mirror alone for %s", async (_name, result) => {
     sync.get.mockResolvedValue(result);
@@ -99,6 +101,32 @@ describe("saveSettings", () => {
     sync.set.mockRejectedValue(new Error("quota"));
     await expect(saveSettings(stored)).rejects.toThrow("quota");
     expect(local.has(MIRROR_KEY)).toBe(false);
+  });
+
+  it.each([
+    ["nothing stored", {}],
+    ["garbage", { settings: "garbage" }],
+    ["an older schema", { settings: { ...stored, schemaVersion: 2 } }],
+    ["the current schema", { settings: stored }],
+  ])("writes over %s", async (_name, existing) => {
+    sync.get.mockResolvedValue(existing);
+    await saveSettings(stored);
+    expect(sync.get).toHaveBeenCalledWith("settings");
+    expect(sync.set).toHaveBeenCalledWith({ settings: stored });
+  });
+
+  it("refuses to overwrite a newer schema, leaving storage and the mirror alone", async () => {
+    sync.get.mockResolvedValue({ settings: { ...stored, schemaVersion: 5 } });
+    local.set(MIRROR_KEY, JSON.stringify(mirrored));
+    await expect(saveSettings(stored)).rejects.toBeInstanceOf(NewerSettingsError);
+    expect(sync.set).not.toHaveBeenCalled();
+    expect(JSON.parse(local.get(MIRROR_KEY) ?? "null")).toEqual(mirrored);
+  });
+
+  it("rejects without writing when the pre-write read fails", async () => {
+    sync.get.mockRejectedValue(new Error("sync unavailable"));
+    await expect(saveSettings(stored)).rejects.toThrow("sync unavailable");
+    expect(sync.set).not.toHaveBeenCalled();
   });
 
   it("still saves when localStorage throws", async () => {

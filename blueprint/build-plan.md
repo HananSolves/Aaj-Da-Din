@@ -26,7 +26,7 @@ not listed here.
 - [x] 8. **Settings store** - `storage.sync` with `schemaVersion`, migrations and the `localStorage` mirror.
 - [x] 9. **Themes and date styles** - 6–8 colour themes, 3 date styles, solid-colour (no photo) mode.
 - [x] 10. **Hindu and Muslim festival sets** - joined festival lines, "expected" labels, Gurpurab source switch (SGPC / Original Nanakshahi).
-- [ ] 11. **Settings panel** - lazy-loaded; calendars, look, festivals, Hijri offset, fact toggle, About.
+- [x] 11. **Settings panel** - lazy-loaded; calendars, look, festivals, Hijri offset, fact toggle, About.
 - [ ] 12. **Onboarding** - three skippable screens with live preview; default festival sets follow the chosen calendars.
 - [ ] 13. **Content pipeline** - `photos.csv` / `facts.csv`, build and optimise scripts, verified-only filter, post-paint remote refresh.
 - [ ] 14. **Daily photo** - 60 photos (6–8 bundled), month tags, tomorrow's photo prefetched, credit line.

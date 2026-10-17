@@ -1,0 +1,139 @@
+.settings {
+  position: fixed;
+  inset: 0 0 0 auto;
+  box-sizing: border-box;
+  width: min(24rem, 100%);
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-left: 1px solid var(--muted);
+  background: var(--bg);
+  color: var(--fg);
+  overflow-y: auto;
+  font-size: 1rem;
+}
+
+.settings::backdrop {
+  background: transparent;
+}
+
+.settings header {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--muted);
+  background: var(--bg);
+}
+
+.settings h1 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.settings h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+  color: var(--muted);
+}
+
+.settings .body {
+  padding: 1rem 1.25rem 2rem;
+}
+
+.settings section {
+  margin-bottom: 1.5rem;
+}
+
+.settings fieldset {
+  margin: 0 0 1rem;
+  padding: 0;
+  border: 0;
+}
+
+.settings legend {
+  padding: 0;
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+}
+
+.settings .hint {
+  margin: 0 0 0.25rem;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.settings .choice {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2rem;
+}
+
+.settings input {
+  accent-color: var(--fg);
+}
+
+.settings ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.settings li {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.settings li .choice {
+  flex: 1;
+}
+
+.settings button {
+  min-width: 2.25rem;
+  min-height: 2.25rem;
+  padding: 0 0.5rem;
+  border: 1px solid var(--muted);
+  border-radius: 0.25rem;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.settings button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.settings :focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 2px;
+}
+
+.settings .error,
+.settings .note {
+  margin: 0 0 0.75rem;
+}
+
+.settings .error:empty,
+.settings .note:empty {
+  display: none;
+}
+
+.settings a {
+  color: inherit;
+}
+
+@media (max-width: 40rem) {
+  .settings {
+    width: 100%;
+    border-left: 0;
+  }
+}

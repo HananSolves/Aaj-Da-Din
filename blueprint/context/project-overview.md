@@ -1,6 +1,6 @@
 # Aaj Da Din - Project Overview
 
-<!-- blueprint:source-hash f2fc7ec3b92f5039f709ac1f13eb48c21d3919a8a710edccb44b32bf4c21987b -->
+<!-- blueprint:source-hash d5eefe4d5b28e7fc54a333c63f472a58babed71fc6d7ada22cdcc865858a27f5 -->
 
 > A Punjabi new-tab browser extension (Chrome, Edge, Firefox): today's date in the calendars Punjabis use, today's and tomorrow's festivals, a daily photo of Punjab and a daily fact. Fast, private, open source, works offline.
 
@@ -46,7 +46,7 @@ Current milestone: **v0**. Scaffold, CI, size check and the Gregorian formatter 
 8. **Settings store** - `storage.sync`, `schemaVersion`, migrations, `localStorage` mirror.
 9. **Themes and date styles** - 6-8 themes, 3 date styles, solid-colour mode.
 10. **Hindu and Muslim sets** - joined lines ("Today: Diwali · Bandi Chhor Divas"), "expected" labels for Muslim dates, Gurpurab source switch. Hindu dates are sourced lists for 2026-2030 only; 2031-2036 are still to be added.
-11. **Settings panel** - lazy-loaded.
+11. **Settings panel** - lazy-loaded native dialog opened from a gear; calendars on/off and order, look, festival sets, Gurpurab source, Hijri offset, Today/Tomorrow lines, fact toggle, About (version and repository link); changes apply and save at once.
 12. **Onboarding** - three skippable screens; default sets follow chosen calendars.
 13. **Content pipeline** - CSVs, build and optimise scripts, verified-only filter, post-paint remote refresh.
 14. **Daily photo** - 60 photos, 6-8 bundled, tomorrow's prefetched.
@@ -85,9 +85,9 @@ No backend or database: bundled static data, a remote copy of it, and the user's
 
 ### Settings (`storage.sync`, mirrored to `localStorage` key `add:settings`)
 
-Existing in `src/settings/types.ts` (schema 3):
+Existing in `src/settings/types.ts` (schema 4):
 
-- `schemaVersion` (3) - bump on shape change and add a migration in `migrations.ts`
+- `schemaVersion` (4) - bump on shape change and add a migration in `migrations.ts`
 - `calendars` (`CalendarId[]`) - enabled calendars in display order; `CalendarId` = `gregorian | desi | bikrami | nanakshahi | hijri`
 - `theme` (`ThemeId`) - `chitta | raat | sarson | phulkari | mitti | neela`; with nothing stored, `prefers-color-scheme` picks `chitta` or `raat`
 - `dateStyle` (`list | centered | compact`) - layout only
@@ -95,10 +95,10 @@ Existing in `src/settings/types.ts` (schema 3):
 - `hijriOffset` (-1 | 0 | 1) - labelled "Match your local mosque"; it also moves the Muslim festival lines
 - `festivalSets` (`FestivalSet[]`) - enabled sets from `cultural | hindu | sikh | muslim`, any subset including none; a v2 value migrates to `cultural` + `sikh`
 - `gurpurabSource` (`sgpc | nanakshahi`) - `sgpc` by default; `nanakshahi` is Original Nanakshahi (2003)
+- `showFestivalLines` (boolean) - show the Today/Tomorrow lines; `true` by default and for every migrated value
+- `showFact` (boolean) - show the daily fact; `true` by default; stored now, read by the fact (item 15)
 
-Planned from plan §7.3 (exact names decided when built, items 11-15): show Today/Tomorrow lines, show fact.
-
-The store (item 8, `src/settings/{migrations,store}.ts`) keeps the whole `Settings` object in `storage.sync` under the single key `settings`. `parseSettings` validates it and the mirror alike (`parseMirror` is `null` for a missing or invalid value). Older schemas migrate in memory on read and are not written back; a newer schema is ignored (`null`), never overwritten; `saveSettings` writes `storage.sync` before the mirror. The new tab paints from the mirror, then re-renders if `storage.sync` differs. With no settings anywhere, v0 shows all five calendars and all four festival sets, while `defaultSettings` keeps Gregorian + Desi + Nanakshahi as the skip-onboarding default.
+The store (item 8, `src/settings/{migrations,store}.ts`) keeps the whole `Settings` object in `storage.sync` under the single key `settings`. `parseSettings` validates it and the mirror alike (`parseMirror` is `null` for a missing or invalid value). Older schemas migrate in memory on read and are not written back; a newer schema is ignored (`null`), and `saveSettings` rejects with `NewerSettingsError` rather than overwrite it; `saveSettings` writes `storage.sync` before the mirror. The settings panel (item 11) is the first writer: each edit applies to the page, then saves. The new tab paints from the mirror, then re-renders if `storage.sync` differs. With no settings anywhere, v0 shows all five calendars and all four festival sets, while `defaultSettings` keeps Gregorian + Desi + Nanakshahi as the skip-onboarding default.
 
 > Locked: `storage.sync` holds settings only (100 KB total, 8 KB per item). Once published, users' synced settings outlive releases, so `schemaVersion` and its migration path must keep working.
 
@@ -206,7 +206,6 @@ Plan §10 items (resolve in the plans, then re-run `/overview`):
 
 Found while generating this overview:
 
-- **Settings code vs plan** - `Settings` (schema 3) has eight fields; plan §7.3 still needs the Today/Tomorrow and fact toggles, added with items 11-15, each bumping `schemaVersion` with a migration step.
 - **Oversized items** - build-plan items 7 (photos + fact + sign-off checks) and 13 (content pipeline: CSVs, two scripts, filter, remote refresh) bundle several concerns; `/feature` may propose splitting them.
 - **Layout vs code** - plan §5.5 names `src/festivals/resolve.ts`; feature 5 built `rules.ts`, `festivals.ts` and `lines.ts`. Plan §5.5 lists `ui/` as lazy chunks; the eager date-row view-model is `src/ui/today.ts`.
 - **Domain** - no Cloudflare domain is named yet (needed for content URLs, privacy page and the Firefox ID).

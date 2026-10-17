@@ -1,4 +1,5 @@
-import type { DateStyle } from "../settings/types.ts";
+import type { FestivalSet, GurpurabSource } from "../festivals/sets.ts";
+import type { Background, DateStyle } from "../settings/types.ts";
 import type { ThemeId } from "../themes/themes.ts";
 
 // All UI strings live here so other languages can be added later (project-plan §3.3).
@@ -90,5 +91,54 @@ export const en = {
     eidAlAdha: "Eid al-Adha",
     islamicNewYear: "Islamic New Year",
     ashura: "Ashura",
+  },
+  settings: {
+    open: "Settings",
+    title: "Settings",
+    close: "Close",
+    saveFailed: "Could not save your settings. They will reset when you open a new tab.",
+    newerVersion:
+      "These settings were saved by a newer version of Aaj Da Din. Update this browser's extension to change them.",
+    moved: (name: string, position: number, total: number) =>
+      `${name} moved to position ${position} of ${total}`,
+    sections: {
+      calendars: "Calendars",
+      look: "Look",
+      festivals: "Festivals",
+      fact: "Fact",
+      about: "About",
+    },
+    moveUp: (name: string) => `Move ${name} up`,
+    moveDown: (name: string) => `Move ${name} down`,
+    theme: "Theme",
+    dateStyle: "Date style",
+    background: "Background",
+    backgroundNames: {
+      photo: "Daily photo",
+      solid: "Solid colour",
+    } satisfies Record<Background, string>,
+    festivalSets: "Festival sets",
+    festivalSetNames: {
+      cultural: "Punjabi cultural",
+      sikh: "Sikh",
+      hindu: "Hindu",
+      muslim: "Muslim",
+    } satisfies Record<FestivalSet, string>,
+    gurpurabSource: "Gurpurab dates",
+    gurpurabSourceNames: {
+      sgpc: "SGPC jantri",
+      nanakshahi: "Original Nanakshahi (2003)",
+    } satisfies Record<GurpurabSource, string>,
+    hijriOffset: "Hijri date",
+    hijriOffsetHint: "Match your local mosque",
+    hijriOffsetNames: {
+      earlier: "1 day earlier",
+      calculated: "As calculated",
+      later: "1 day later",
+    },
+    showFestivalLines: "Show the Today and Tomorrow festival lines",
+    showFact: "Show the daily fact",
+    version: "Version",
+    openSource: "Open source (GPL-3.0)",
   },
 } as const;
