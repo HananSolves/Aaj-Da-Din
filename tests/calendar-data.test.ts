@@ -127,11 +127,12 @@ describe("all generated files", () => {
     expect(new Set(starts).size).toBe(starts.length);
   });
 
-  describe.each(dataCalendars)("$id", ({ id, place, generate }) => {
-    it.each(years)("%i is under 6 KB and matches a fresh build", (year) => {
+  // Freshness against the generator is `pnpm check:calendar`, which CI and `pnpm check` run on the
+  // exact bytes; repeating it here would compute every calendar a second time.
+  describe.each(dataCalendars)("$id", ({ id }) => {
+    it.each(years)("%i is under 6 KB", (year) => {
       const size = statSync(new URL(`../data/calendar/${id}/${year}.json`, import.meta.url)).size;
       expect(size).toBeLessThan(6 * 1024);
-      expect(readCalendarFile(id, year)).toEqual(generate(year, place));
     });
   });
 

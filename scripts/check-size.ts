@@ -1,7 +1,8 @@
 // Size-budget check (project-plan §5.3). Run after `pnpm build` / `pnpm build:firefox`.
-// Budgets here are for the whole package; refine to "initial JS" once lazy chunks exist.
+// JS is budgeted as initial JS: the scripts newtab.html loads and everything they import
+// statically. Lazy chunks (settings, calendar code and data) count toward the package total only.
 import { readdirSync, readFileSync, statSync } from "node:fs";
-import { extname, join } from "node:path";
+import { dirname, extname, join, relative } from "node:path";
 import { gzipSync } from "node:zlib";
 
 const KB = 1024;
@@ -12,6 +13,25 @@ const budgets = {
 };
 
 const outputs = [".output/chrome-mv3", ".output/firefox-mv3"];
+
+// Static imports compile to `from"./x.js"` or `import"./x.js"`; dynamic ones are `import(...)`.
+const staticImport = /(?:from|import)\s*["'`](\.\/[^"'`]+\.js)["'`]/g;
+
+function initialScripts(dir: string): Set<string> {
+  const html = readFileSync(join(dir, "newtab.html"), "utf8");
+  const queue = [...html.matchAll(/<script[^>]*\ssrc="\/([^"]+\.js)"/g)].map((m) => m[1] ?? "");
+  const seen = new Set<string>();
+  for (let file = queue.pop(); file !== undefined; file = queue.pop()) {
+    if (seen.has(file)) continue;
+    seen.add(file);
+    const source = readFileSync(join(dir, file), "utf8");
+    for (const [, target] of source.matchAll(staticImport)) {
+      queue.push(join(dirname(file), target ?? ""));
+    }
+  }
+  if (seen.size === 0) throw new Error(`${dir}/newtab.html loads no scripts; check the parser`);
+  return seen;
+}
 
 function walk(dir: string): string[] {
   return readdirSync(dir).flatMap((name) => {
@@ -32,7 +52,9 @@ for (const dir of outputs) {
     continue;
   }
 
+  const initial = initialScripts(dir);
   let js = 0;
+  let allJs = 0;
   let css = 0;
   let pkg = 0;
   for (const file of files) {
@@ -40,16 +62,21 @@ for (const dir of outputs) {
     const ext = extname(file);
     const isPhoto = /\.(avif|webp|jpe?g|png)$/.test(file) && file.includes("/photos/");
     if (!isPhoto) pkg += buf.length;
-    if (ext === ".js") js += gzipSync(buf).length;
+    if (ext === ".js") {
+      const size = gzipSync(buf).length;
+      allJs += size;
+      if (initial.has(relative(dir, file))) js += size;
+    }
     if (ext === ".css") css += gzipSync(buf).length;
   }
 
   const rows: [string, number, number][] = [
-    ["JS gzip", js, budgets.jsGzip],
+    ["JS gzip (initial)", js, budgets.jsGzip],
     ["CSS gzip", css, budgets.cssGzip],
     ["Package (no photos)", pkg, budgets.packageExPhotos],
   ];
   console.log(dir);
+  console.log(`  info JS gzip (all chunks): ${(allJs / KB).toFixed(1)} KB`);
   for (const [label, size, max] of rows) {
     const ok = size <= max;
     if (!ok) failed = true;
