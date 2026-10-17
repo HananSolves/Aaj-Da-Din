@@ -1,3 +1,4 @@
+import { calendarIds } from "../calendars/registry.ts";
 import { type FestivalSet, festivalSets } from "../festivals/sets.ts";
 import type { CalendarId, Settings } from "./types.ts";
 
@@ -6,13 +7,11 @@ export interface CalendarRow {
   enabled: boolean;
 }
 
-const allCalendars: readonly CalendarId[] = ["gregorian", "desi", "bikrami", "nanakshahi", "hijri"];
-
 /** Every calendar once: the enabled ones in their saved order, then the rest in the fixed order. */
 export function calendarRows({ calendars }: Pick<Settings, "calendars">): CalendarRow[] {
   return [
     ...calendars.map((id) => ({ id, enabled: true })),
-    ...allCalendars.filter((id) => !calendars.includes(id)).map((id) => ({ id, enabled: false })),
+    ...calendarIds.filter((id) => !calendars.includes(id)).map((id) => ({ id, enabled: false })),
   ];
 }
 

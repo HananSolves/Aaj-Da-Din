@@ -3,7 +3,7 @@ import { parseMirror } from "../src/settings/mirror.ts";
 import { defaultSettings } from "../src/settings/types.ts";
 
 const valid = {
-  schemaVersion: 4,
+  schemaVersion: 5,
   calendars: ["hijri", "gregorian"],
   theme: "raat",
   dateStyle: "compact",
@@ -30,7 +30,8 @@ describe("parseMirror", () => {
     const v1 = { schemaVersion: 1, calendars: ["desi"], theme: "dark", hijriOffset: 0 };
     expect(parse(v1)).toEqual({
       ...v1,
-      schemaVersion: 4,
+      calendars: ["punjabi-solar"],
+      schemaVersion: 5,
       theme: "raat",
       dateStyle: "list",
       background: "photo",
@@ -51,7 +52,7 @@ describe("parseMirror", () => {
     } = valid;
     expect(parse({ ...v2, schemaVersion: 2 })).toEqual({
       ...v2,
-      schemaVersion: 4,
+      schemaVersion: 5,
       festivalSets: ["cultural", "sikh"],
       gurpurabSource: "sgpc",
       showFestivalLines: true,
@@ -64,13 +65,13 @@ describe("parseMirror", () => {
   });
 
   it.each([
-    ["a newer schemaVersion", { ...valid, schemaVersion: 5 }],
+    ["a newer schemaVersion", { ...valid, schemaVersion: 6 }],
     ["no schemaVersion", { ...valid, schemaVersion: undefined }],
     ["empty calendars", { ...valid, calendars: [] }],
     ["calendars that is not an array", { ...valid, calendars: "gregorian" }],
     ["an unknown calendar", { ...valid, calendars: ["gregorian", "julian"] }],
     ["a non-string calendar", { ...valid, calendars: [1] }],
-    ["a duplicate calendar", { ...valid, calendars: ["desi", "desi"] }],
+    ["a duplicate calendar", { ...valid, calendars: ["punjabi-solar", "punjabi-solar"] }],
     ["an offset out of range", { ...valid, hijriOffset: 2 }],
     ["an offset that is not a number", { ...valid, hijriOffset: "1" }],
     ["a non-string theme", { ...valid, theme: 3 }],

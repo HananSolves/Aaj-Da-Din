@@ -11,9 +11,9 @@ const withCalendars = (calendars: CalendarId[]): Settings => ({ ...defaultSettin
 
 describe("calendarRows", () => {
   it("lists the enabled calendars in saved order, then the rest in the fixed order", () => {
-    expect(calendarRows(withCalendars(["hijri", "desi"]))).toEqual([
+    expect(calendarRows(withCalendars(["hijri", "punjabi-solar"]))).toEqual([
       { id: "hijri", enabled: true },
-      { id: "desi", enabled: true },
+      { id: "punjabi-solar", enabled: true },
       { id: "gregorian", enabled: false },
       { id: "bikrami", enabled: false },
       { id: "nanakshahi", enabled: false },
@@ -21,7 +21,7 @@ describe("calendarRows", () => {
   });
 
   it("has no disabled rows when all five are on", () => {
-    const all = withCalendars(["nanakshahi", "gregorian", "hijri", "desi", "bikrami"]);
+    const all = withCalendars(["nanakshahi", "gregorian", "hijri", "punjabi-solar", "bikrami"]);
     expect(calendarRows(all).every((row) => row.enabled)).toBe(true);
     expect(calendarRows(all)).toHaveLength(5);
   });
@@ -29,34 +29,45 @@ describe("calendarRows", () => {
 
 describe("toggleCalendar", () => {
   it("appends a calendar that is turned on", () => {
-    const next = toggleCalendar(withCalendars(["hijri", "desi"]), "gregorian");
-    expect(next.calendars).toEqual(["hijri", "desi", "gregorian"]);
+    const next = toggleCalendar(withCalendars(["hijri", "punjabi-solar"]), "gregorian");
+    expect(next.calendars).toEqual(["hijri", "punjabi-solar", "gregorian"]);
   });
 
   it("removes a calendar that is turned off, keeping the order of the rest", () => {
-    const next = toggleCalendar(withCalendars(["hijri", "desi", "gregorian"]), "desi");
+    const next = toggleCalendar(
+      withCalendars(["hijri", "punjabi-solar", "gregorian"]),
+      "punjabi-solar",
+    );
     expect(next.calendars).toEqual(["hijri", "gregorian"]);
   });
 
   it("keeps the last enabled calendar on", () => {
-    const only = withCalendars(["desi"]);
-    expect(toggleCalendar(only, "desi")).toBe(only);
+    const only = withCalendars(["punjabi-solar"]);
+    expect(toggleCalendar(only, "punjabi-solar")).toBe(only);
   });
 
   it("does not mutate its input", () => {
-    const before = withCalendars(["hijri", "desi"]);
+    const before = withCalendars(["hijri", "punjabi-solar"]);
     toggleCalendar(before, "gregorian");
-    toggleCalendar(before, "desi");
-    expect(before.calendars).toEqual(["hijri", "desi"]);
+    toggleCalendar(before, "punjabi-solar");
+    expect(before.calendars).toEqual(["hijri", "punjabi-solar"]);
   });
 });
 
 describe("moveCalendar", () => {
-  const three = withCalendars(["hijri", "desi", "gregorian"]);
+  const three = withCalendars(["hijri", "punjabi-solar", "gregorian"]);
 
   it("moves a calendar up and down by swapping with its neighbour", () => {
-    expect(moveCalendar(three, "gregorian", -1).calendars).toEqual(["hijri", "gregorian", "desi"]);
-    expect(moveCalendar(three, "hijri", 1).calendars).toEqual(["desi", "hijri", "gregorian"]);
+    expect(moveCalendar(three, "gregorian", -1).calendars).toEqual([
+      "hijri",
+      "gregorian",
+      "punjabi-solar",
+    ]);
+    expect(moveCalendar(three, "hijri", 1).calendars).toEqual([
+      "punjabi-solar",
+      "hijri",
+      "gregorian",
+    ]);
   });
 
   it.each([
@@ -71,8 +82,8 @@ describe("moveCalendar", () => {
   });
 
   it("does not mutate its input", () => {
-    moveCalendar(three, "desi", 1);
-    expect(three.calendars).toEqual(["hijri", "desi", "gregorian"]);
+    moveCalendar(three, "punjabi-solar", 1);
+    expect(three.calendars).toEqual(["hijri", "punjabi-solar", "gregorian"]);
   });
 });
 

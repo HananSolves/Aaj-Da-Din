@@ -4,7 +4,7 @@ import { type CalendarYear, locate } from "../calendars/year-data.ts";
 import { festivals } from "./festivals.ts";
 import type { FestivalSet, GurpurabSource } from "./sets.ts";
 
-/** Months are 1 to 12 with 1 = Chet, as in `toDesi` and `toBikrami`. */
+/** Months are 1 to 12 with 1 = Chet, as in `toPunjabiSolar` and `toBikrami`. */
 export type FestivalRule =
   | { kind: "gregorian"; month: number; day: number }
   | { kind: "sangrand"; month: number; daysBefore?: number }
@@ -73,7 +73,7 @@ export function resolveFestivals(
       case "gregorian":
         return rule.month === date.getMonth() + 1 && rule.day === date.getDate();
       case "sangrand": {
-        // Entry i of `sangrand` starts desi month ((9 + i) % 12) + 1, so a shift into another
+        // Entry i of `sangrand` starts Punjabi solar month ((9 + i) % 12) + 1, so a shift into another
         // year finds no entry and never matches.
         const i = data.sangrand.indexOf(isoAfter(date, rule.daysBefore ?? 0));
         return i >= 0 && ((9 + i) % 12) + 1 === rule.month;

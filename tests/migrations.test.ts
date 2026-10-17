@@ -3,7 +3,7 @@ import { isNewerSchema, type MigrationStep, parseSettings } from "../src/setting
 import { defaultSettings } from "../src/settings/types.ts";
 
 const valid = {
-  schemaVersion: 4,
+  schemaVersion: 5,
   calendars: ["hijri", "gregorian"],
   theme: "raat",
   dateStyle: "centered",
@@ -34,7 +34,7 @@ describe("parseSettings", () => {
   });
 
   it.each([
-    ["a newer schemaVersion", { ...valid, schemaVersion: 5 }],
+    ["a newer schemaVersion", { ...valid, schemaVersion: 6 }],
     ["no schemaVersion", { ...valid, schemaVersion: undefined }],
     ["schemaVersion 0", { ...valid, schemaVersion: 0 }],
     ["a fractional schemaVersion", { ...valid, schemaVersion: 1.5 }],
@@ -43,7 +43,7 @@ describe("parseSettings", () => {
     ["calendars that is not an array", { ...valid, calendars: "gregorian" }],
     ["an unknown calendar", { ...valid, calendars: ["gregorian", "julian"] }],
     ["a non-string calendar", { ...valid, calendars: [1] }],
-    ["a duplicate calendar", { ...valid, calendars: ["desi", "desi"] }],
+    ["a duplicate calendar", { ...valid, calendars: ["punjabi-solar", "punjabi-solar"] }],
     ["an offset out of range", { ...valid, hijriOffset: 2 }],
     ["an offset that is not a number", { ...valid, hijriOffset: "1" }],
     ["a non-string theme", { ...valid, theme: 3 }],
@@ -80,7 +80,7 @@ describe("parseSettings 1 to 2", () => {
   it("maps dark to raat and adds the new defaults, keeping the other fields", () => {
     expect(parseSettings(v1)).toEqual({
       ...v1,
-      schemaVersion: 4,
+      schemaVersion: 5,
       theme: "raat",
       dateStyle: "list",
       background: "photo",
@@ -119,7 +119,7 @@ describe("parseSettings 2 to 3", () => {
   it("adds the cultural and Sikh sets and the SGPC source, keeping the other fields", () => {
     expect(parseSettings(v2)).toEqual({
       ...v2,
-      schemaVersion: 4,
+      schemaVersion: 5,
       festivalSets: ["cultural", "sikh"],
       gurpurabSource: "sgpc",
       showFestivalLines: true,
@@ -146,7 +146,7 @@ describe("parseSettings 3 to 4", () => {
   it("turns both toggles on, keeping the other fields", () => {
     expect(parseSettings(v3)).toEqual({
       ...v3,
-      schemaVersion: 4,
+      schemaVersion: 5,
       showFestivalLines: true,
       showFact: true,
     });
@@ -157,20 +157,51 @@ describe("parseSettings 3 to 4", () => {
   });
 });
 
+describe("parseSettings 4 to 5", () => {
+  const v4 = { ...valid, schemaVersion: 4, calendars: ["hijri", "desi", "gregorian"] };
+
+  it("renames desi to punjabi-solar in place, keeping the order and the other fields", () => {
+    expect(parseSettings(v4)).toEqual({
+      ...v4,
+      schemaVersion: 5,
+      calendars: ["hijri", "punjabi-solar", "gregorian"],
+    });
+  });
+
+  it("leaves calendars without desi as they were", () => {
+    const without = { ...v4, calendars: ["hijri", "bikrami"] };
+    expect(parseSettings(without)?.calendars).toEqual(["hijri", "bikrami"]);
+  });
+
+  it("migrates a schema 1 value that held desi all the way", () => {
+    const v1 = { schemaVersion: 1, calendars: ["desi"], theme: "dark", hijriOffset: 0 };
+    expect(parseSettings(v1)?.calendars).toEqual(["punjabi-solar"]);
+  });
+
+  it("still rejects an unknown id and a calendars field that is not an array", () => {
+    expect(parseSettings({ ...v4, calendars: ["hijri", "julian"] })).toBeNull();
+    expect(parseSettings({ ...v4, calendars: "desi" })).toBeNull();
+  });
+
+  it("no longer accepts desi at schema 5", () => {
+    expect(parseSettings({ ...valid, calendars: ["desi"] })).toBeNull();
+  });
+});
+
 describe("isNewerSchema", () => {
-  it.each([5, 6, 100])("is true for schemaVersion %j", (schemaVersion) => {
+  it.each([6, 7, 100])("is true for schemaVersion %j", (schemaVersion) => {
     expect(isNewerSchema({ schemaVersion })).toBe(true);
   });
 
   it.each([
-    ["the current schema", { schemaVersion: 4 }],
+    ["the current schema", { schemaVersion: 5 }],
     ["an older schema", { schemaVersion: 1 }],
     ["a string version", { schemaVersion: "5" }],
     ["a fractional version", { schemaVersion: 5.5 }],
     ["no version", {}],
     ["null", null],
     ["undefined", undefined],
-    ["an array", [{ schemaVersion: 5 }]],
+    ["an array", [{ schemaVersion: 6 }]],
     ["a string", "5"],
   ])("is false for %s", (_name, value) => {
     expect(isNewerSchema(value)).toBe(false);

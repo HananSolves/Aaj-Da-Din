@@ -22,7 +22,7 @@ export const en = {
   ],
   calendarNames: {
     gregorian: "Gregorian",
-    desi: "Desi",
+    "punjabi-solar": "Punjabi solar",
     bikrami: "Bikrami",
     nanakshahi: "Nanakshahi",
     hijri: "Hijri",

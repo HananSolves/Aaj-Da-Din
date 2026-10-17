@@ -1,7 +1,8 @@
+import type { CalendarId } from "../calendars/registry.ts";
 import type { FestivalSet, GurpurabSource } from "../festivals/sets.ts";
 import type { ThemeId } from "../themes/themes.ts";
 
-export type CalendarId = "gregorian" | "desi" | "bikrami" | "nanakshahi" | "hijri";
+export type { CalendarId };
 
 export const dateStyles = ["list", "centered", "compact"] as const;
 export type DateStyle = (typeof dateStyles)[number];
@@ -11,7 +12,7 @@ export type Background = (typeof backgrounds)[number];
 
 export interface Settings {
   /** Bump when the shape changes and add a migration in migrations.ts. */
-  schemaVersion: 4;
+  schemaVersion: 5;
   calendars: CalendarId[];
   theme: ThemeId;
   dateStyle: DateStyle;
@@ -24,8 +25,8 @@ export interface Settings {
 }
 
 export const defaultSettings: Settings = {
-  schemaVersion: 4,
-  calendars: ["gregorian", "desi", "nanakshahi"],
+  schemaVersion: 5,
+  calendars: ["gregorian", "punjabi-solar", "nanakshahi"],
   theme: "chitta",
   dateStyle: "list",
   background: "photo",

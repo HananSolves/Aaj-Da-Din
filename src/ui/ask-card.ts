@@ -1,4 +1,4 @@
-import { loadCalendarYear, localIso } from "../calendars/year-data.ts";
+import { loadFestivalYear, localIso } from "../calendars/year-data.ts";
 import { resolveFestivals } from "../festivals/rules.ts";
 import type { Settings } from "../settings/types.ts";
 import { en } from "../strings/en.ts";
@@ -66,7 +66,7 @@ export async function maybeShowAsk({ now, settings, parent }: AskCardOptions): P
       hijriOffset: settings.hijriOffset,
     };
     const message = await decideAsk(now, async (date) => {
-      const data = await loadCalendarYear(date.getFullYear()).catch(() => undefined);
+      const data = await loadFestivalYear(date.getFullYear()).catch(() => undefined);
       return data ? resolveFestivals(date, data, query) : [];
     });
     if (!message) return;

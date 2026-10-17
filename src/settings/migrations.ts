@@ -1,8 +1,9 @@
+import { calendarIds } from "../calendars/registry.ts";
 import { festivalSets, gurpurabSources } from "../festivals/sets.ts";
 import { themeIds } from "../themes/themes.ts";
-import { backgrounds, type CalendarId, dateStyles, type Settings } from "./types.ts";
+import { backgrounds, dateStyles, type Settings } from "./types.ts";
 
-export const currentSchemaVersion = 4;
+export const currentSchemaVersion = 5;
 
 /** Takes a value stored at schema `n` (the step at index `n - 1`) and returns it at schema `n + 1`. */
 export type MigrationStep = (stored: Record<string, unknown>) => Record<string, unknown>;
@@ -19,15 +20,14 @@ export const migrations: MigrationStep[] = [
   (stored) => ({ ...stored, festivalSets: ["cultural", "sikh"], gurpurabSource: "sgpc" }),
   // 3 to 4: both toggles are new. Every earlier schema showed the festival lines (and had no fact).
   (stored) => ({ ...stored, showFestivalLines: true, showFact: true }),
+  // 4 to 5: the Desi calendar is now Punjabi solar.
+  (stored) => ({
+    ...stored,
+    calendars: Array.isArray(stored.calendars)
+      ? stored.calendars.map((id) => (id === "desi" ? "punjabi-solar" : id))
+      : stored.calendars,
+  }),
 ];
-
-const calendarIds: readonly string[] = [
-  "gregorian",
-  "desi",
-  "bikrami",
-  "nanakshahi",
-  "hijri",
-] satisfies CalendarId[];
 
 function isCurrentShape(value: Record<string, unknown>, current: number): boolean {
   const {
@@ -46,7 +46,7 @@ function isCurrentShape(value: Record<string, unknown>, current: number): boolea
     schemaVersion === current &&
     Array.isArray(calendars) &&
     calendars.length > 0 &&
-    calendars.every((id) => typeof id === "string" && calendarIds.includes(id)) &&
+    calendars.every((id) => calendarIds.some((known) => known === id)) &&
     new Set(calendars).size === calendars.length &&
     themeIds.some((id) => id === theme) &&
     dateStyles.some((id) => id === dateStyle) &&

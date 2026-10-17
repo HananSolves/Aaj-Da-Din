@@ -1,5 +1,5 @@
-import { loadCalendarYear, localIso } from "../../src/calendars/year-data.ts";
-import { type FestivalLines, festivalLines } from "../../src/festivals/lines.ts";
+import { localIso } from "../../src/calendars/year-data.ts";
+import type { FestivalLines } from "../../src/festivals/lines.ts";
 import { festivalSets } from "../../src/festivals/sets.ts";
 import { readMirror } from "../../src/settings/mirror.ts";
 import { loadSettings } from "../../src/settings/store.ts";
@@ -10,7 +10,7 @@ import { todayRows } from "../../src/ui/today.ts";
 
 // With no settings anywhere, the page shows every calendar and festival set until onboarding exists
 // (build-plan 12).
-const v0Calendars: CalendarId[] = ["gregorian", "desi", "bikrami", "nanakshahi", "hijri"];
+const v0Calendars: CalendarId[] = ["gregorian", "punjabi-solar", "bikrami", "nanakshahi", "hijri"];
 
 function element<K extends keyof HTMLElementTagNameMap>(
   tag: K,
@@ -29,13 +29,13 @@ async function renderDates(
   now: Date,
   isCurrent: () => boolean,
 ): Promise<void> {
-  // A year with no bundled file, or a chunk that fails to load, just leaves out Desi and Bikrami.
-  const data = await loadCalendarYear(now.getFullYear()).catch(() => undefined);
+  // A year with no bundled file, or a chunk that fails to load, just leaves out that calendar.
+  const rows = await todayRows(now, settings);
   if (!isCurrent()) return;
 
   const iso = localIso(now);
   dates.replaceChildren(
-    ...todayRows(now, settings, data).map((row) => {
+    ...rows.map((row) => {
       const li = document.createElement("li");
       const time = element("time", row.text);
       time.dateTime = iso;
@@ -51,12 +51,18 @@ async function renderFestivals(
   now: Date,
   isCurrent: () => boolean,
 ): Promise<void> {
+  // Loaded only when the lines are on, so their rules and the calendars they read stay out of the
+  // first paint.
   const lines: FestivalLines = settings.showFestivalLines
-    ? await festivalLines(now, {
-        sets: settings.festivalSets,
-        source: settings.gurpurabSource,
-        hijriOffset: settings.hijriOffset,
-      }).catch(() => ({}))
+    ? await import("../../src/festivals/lines.ts")
+        .then(({ festivalLines }) =>
+          festivalLines(now, {
+            sets: settings.festivalSets,
+            source: settings.gurpurabSource,
+            hijriOffset: settings.hijriOffset,
+          }),
+        )
+        .catch(() => ({}))
     : {};
   if (!isCurrent()) return;
 

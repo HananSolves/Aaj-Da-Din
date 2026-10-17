@@ -1,17 +1,32 @@
 import * as Astronomy from "astronomy-engine";
 
-export type YearData = {
+/** The place a calendar's published almanac is computed for (project-plan §3.4.6). */
+export type Place = {
+  name: string;
+  latitude: number;
+  longitude: number;
+  /** Metres above sea level. */
+  elevation: number;
+  /** Local civil time of the place, in minutes ahead of UTC. */
+  utcOffsetMinutes: number;
+};
+
+export type SolarYear = {
   year: number;
+  /** 13 sorted ISO dates; index 0 is the previous December's sangrand. */
   sangrand: string[];
+};
+
+export type LunisolarYear = {
+  year: number;
+  /** Sunrise tithi, 1 to 30, one per day of the year. */
   tithi: number[];
   months: [date: string, monthIndex: number, adhik: 0 | 1][];
 };
 
 export type Sankranti = { rashi: number; time: Date };
 
-const IST_OFFSET_MS = 5.5 * 3600_000;
 const DAY_MS = 86_400_000;
-const amritsar = new Astronomy.Observer(31.634, 74.8723, 234);
 
 const sunriseCache = new Map<string, Date>();
 const tithiCache = new Map<string, number>();
@@ -34,41 +49,44 @@ function siderealSunLongitude(time: Astronomy.AstroTime): number {
   return wrap(Astronomy.SunPosition(time).elon - lahiriAyanamsa(time), 0);
 }
 
-function istDate(date: Date): string {
-  return new Date(date.getTime() + IST_OFFSET_MS).toISOString().slice(0, 10);
+function localDate(date: Date, place: Place): string {
+  return new Date(date.getTime() + place.utcOffsetMinutes * 60_000).toISOString().slice(0, 10);
 }
 
 function addDays(iso: string, days: number): string {
   return new Date(Date.parse(`${iso}T00:00:00Z`) + days * DAY_MS).toISOString().slice(0, 10);
 }
 
-function sunrise(iso: string): Date {
-  const cached = sunriseCache.get(iso);
+function sunrise(iso: string, place: Place): Date {
+  const key = `${place.name}|${iso}`;
+  const cached = sunriseCache.get(key);
   if (cached) return cached;
-  const istMidnight = new Date(Date.parse(`${iso}T00:00:00Z`) - IST_OFFSET_MS);
-  const found = Astronomy.SearchRiseSet(Astronomy.Body.Sun, amritsar, +1, istMidnight, 1);
-  if (!found) throw new Error(`no sunrise found for ${iso}`);
-  sunriseCache.set(iso, found.date);
+  const observer = new Astronomy.Observer(place.latitude, place.longitude, place.elevation);
+  const midnight = new Date(Date.parse(`${iso}T00:00:00Z`) - place.utcOffsetMinutes * 60_000);
+  const found = Astronomy.SearchRiseSet(Astronomy.Body.Sun, observer, +1, midnight, 1);
+  if (!found) throw new Error(`no sunrise found for ${iso} at ${place.name}`);
+  sunriseCache.set(key, found.date);
   return found.date;
 }
 
 // The sunrise-to-sunrise day that contains the instant. This is the rule the SGPC-style
 // sangrand fixtures agree on (a sankranti between midnight and sunrise belongs to the day before).
-function dayContaining(instant: Date): string {
-  const day = istDate(instant);
-  return instant < sunrise(day) ? addDays(day, -1) : day;
+function dayContaining(instant: Date, place: Place): string {
+  const day = localDate(instant, place);
+  return instant < sunrise(day, place) ? addDays(day, -1) : day;
 }
 
-function firstSunriseAtOrAfter(instant: Date): string {
-  const day = istDate(instant);
-  return sunrise(day) >= instant ? day : addDays(day, 1);
+function firstSunriseAtOrAfter(instant: Date, place: Place): string {
+  const day = localDate(instant, place);
+  return sunrise(day, place) >= instant ? day : addDays(day, 1);
 }
 
-export function tithiAtSunrise(iso: string): number {
-  const cached = tithiCache.get(iso);
+function tithiAtSunrise(iso: string, place: Place): number {
+  const key = `${place.name}|${iso}`;
+  const cached = tithiCache.get(key);
   if (cached) return cached;
-  const tithi = Math.floor(Astronomy.MoonPhase(sunrise(iso)) / 12) + 1;
-  tithiCache.set(iso, tithi);
+  const tithi = Math.floor(Astronomy.MoonPhase(sunrise(iso, place)) / 12) + 1;
+  tithiCache.set(key, tithi);
   return tithi;
 }
 
@@ -114,7 +132,7 @@ type Entry = { start: string; month: number; adhik: 0 | 1 };
 // A month with no sankranti inside it is adhik. Months run Purnimanta (full moon to full moon),
 // except that an adhik month and the nija month after it keep their new moon boundaries, as the
 // published jantri shows (Adhik Jeth 2026 runs 17 May to 15 June).
-function purnimantaEntries(year: number): Entry[] {
+function purnimantaEntries(year: number, place: Place): Entry[] {
   const from = new Date(Date.UTC(year - 1, 9, 1));
   const to = new Date(Date.UTC(year + 1, 1, 15));
   const newMoons = moonPhaseTimes(0, from, to);
@@ -131,32 +149,37 @@ function purnimantaEntries(year: number): Entry[] {
     const month = (rashiAt(start) + 1) % 12;
     const fullBefore = fullMoons.filter((f) => f < start).at(-1);
     if (!fullBefore) continue;
-    const startDay = firstSunriseAtOrAfter(previousAdhik ? start : fullBefore);
+    const startDay = firstSunriseAtOrAfter(previousAdhik ? start : fullBefore, place);
     entries.push({ start: startDay, month, adhik: 0 });
-    if (adhik) entries.push({ start: firstSunriseAtOrAfter(start), month, adhik: 1 });
+    if (adhik) entries.push({ start: firstSunriseAtOrAfter(start, place), month, adhik: 1 });
     previousAdhik = adhik;
   }
   return entries;
 }
 
-export function generateYear(year: number): YearData {
+/** Sangrand days: each sankranti belongs to the sunrise-to-sunrise day that contains it. */
+export function generateSolarYear(year: number, place: Place): SolarYear {
   const jan1 = `${year}-01-01`;
-  const days = Date.UTC(year + 1, 0, 1) / DAY_MS - Date.UTC(year, 0, 1) / DAY_MS;
-
   const sankrantis = findSankrantis(
     new Date(Date.UTC(year - 1, 10, 1)),
     new Date(Date.UTC(year + 1, 0, 15)),
   );
-  const sangrandDays = sankrantis.map((s) => dayContaining(s.time));
+  const sangrandDays = sankrantis.map((s) => dayContaining(s.time, place));
   const inYear = sangrandDays.filter((d) => d.startsWith(`${year}-`));
   const carried = sangrandDays.filter((d) => d < jan1).at(-1);
   if (inYear.length !== 12 || !carried) {
     throw new Error(`${year}: expected 12 sangrands plus a carried one, got ${inYear.length}`);
   }
+  return { year, sangrand: [carried, ...inYear] };
+}
 
-  const tithi = Array.from({ length: days }, (_, i) => tithiAtSunrise(addDays(jan1, i)));
+/** Sunrise tithis and Purnimanta months. */
+export function generateLunisolarYear(year: number, place: Place): LunisolarYear {
+  const jan1 = `${year}-01-01`;
+  const days = Date.UTC(year + 1, 0, 1) / DAY_MS - Date.UTC(year, 0, 1) / DAY_MS;
+  const tithi = Array.from({ length: days }, (_, i) => tithiAtSunrise(addDays(jan1, i), place));
 
-  const all = purnimantaEntries(year);
+  const all = purnimantaEntries(year, place);
   const carriedMonth = all.filter((e) => e.start <= jan1).at(-1);
   const inYearMonths = all.filter((e) => e.start > jan1 && e.start.startsWith(`${year}-`));
   if (!carriedMonth) throw new Error(`${year}: no month in progress on 1 January`);
@@ -166,5 +189,5 @@ export function generateYear(year: number): YearData {
     e.adhik,
   ]);
 
-  return { year, sangrand: [carried, ...inYear], tithi, months };
+  return { year, tithi, months };
 }

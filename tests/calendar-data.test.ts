@@ -1,6 +1,7 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, statSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { findSankrantis, generateYear, type YearData } from "../scripts/calendar-math.ts";
+import { findSankrantis, type LunisolarYear, type SolarYear } from "../scripts/calendar-math.ts";
+import { dataCalendars } from "../scripts/calendars.ts";
 import {
   masya2026,
   puranmashi2026,
@@ -8,11 +9,13 @@ import {
   sangrand2026,
   sangrand2027First3,
 } from "./fixtures/calendar.ts";
+import { readCalendarFile } from "./fixtures/years.ts";
 
-function load(year: number): YearData {
-  return JSON.parse(
-    readFileSync(new URL(`../data/calendar/${year}.json`, import.meta.url), "utf8"),
-  );
+function load(year: number): SolarYear & LunisolarYear {
+  return {
+    ...readCalendarFile<SolarYear>("punjabi-solar", year),
+    ...readCalendarFile<LunisolarYear>("bikrami", year),
+  };
 }
 
 const years = Array.from({ length: 11 }, (_, i) => 2026 + i);
@@ -122,13 +125,22 @@ describe("all generated files", () => {
     const starts = data.months.map((m) => m[0]);
     expect([...starts].sort()).toEqual(starts);
     expect(new Set(starts).size).toBe(starts.length);
-    expect(
-      readFileSync(new URL(`../data/calendar/${year}.json`, import.meta.url)).length,
-    ).toBeLessThan(6 * 1024);
   });
 
-  it.each(years)("%i matches a fresh build", (year) => {
-    expect(load(year)).toEqual(generateYear(year));
+  describe.each(dataCalendars)("$id", ({ id, place, generate }) => {
+    it.each(years)("%i is under 6 KB and matches a fresh build", (year) => {
+      const size = statSync(new URL(`../data/calendar/${id}/${year}.json`, import.meta.url)).size;
+      expect(size).toBeLessThan(6 * 1024);
+      expect(readCalendarFile(id, year)).toEqual(generate(year, place));
+    });
+  });
+
+  it("has one folder per calendar definition and no other", () => {
+    const folders = readdirSync(new URL("../data/calendar/", import.meta.url), {
+      withFileTypes: true,
+    });
+    expect(folders.every((f) => f.isDirectory())).toBe(true);
+    expect(folders.map((f) => f.name).sort()).toEqual(dataCalendars.map((c) => c.id).sort());
   });
 
   it("has consecutive months that advance one name at a time", () => {

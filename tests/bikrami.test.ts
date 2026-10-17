@@ -1,17 +1,13 @@
-import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { type BikramiDate, formatBikrami, toBikrami } from "../src/calendars/bikrami.ts";
-import type { CalendarYear } from "../src/calendars/year-data.ts";
+import type { LunisolarYear } from "../src/calendars/year-data.ts";
 import { masya2026, puranmashi2026, purnimantaMonths2026 } from "./fixtures/calendar.ts";
+import { readCalendarFile } from "./fixtures/years.ts";
 
-function load(year: number): CalendarYear {
-  return JSON.parse(
-    readFileSync(new URL(`../data/calendar/${year}.json`, import.meta.url), "utf8"),
-  );
-}
+const load = (year: number) => readCalendarFile<LunisolarYear>("bikrami", year);
 
 const data = new Map(Array.from({ length: 11 }, (_, i) => [2026 + i, load(2026 + i)] as const));
-const dataFor = (date: Date): CalendarYear => {
+const dataFor = (date: Date): LunisolarYear => {
   const found = data.get(date.getFullYear());
   if (!found) throw new Error(`no data for ${date.getFullYear()}`);
   return found;

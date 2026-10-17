@@ -1,4 +1,4 @@
-import { loadCalendarYear } from "../calendars/year-data.ts";
+import { loadFestivalYear } from "../calendars/year-data.ts";
 import { en } from "../strings/en.ts";
 import { festivals } from "./festivals.ts";
 import { type Festival, type FestivalQuery, resolveFestivals } from "./rules.ts";
@@ -19,7 +19,7 @@ const names: Readonly<Record<string, string | undefined>> = en.festivals;
 export async function festivalLines(
   now: Date,
   query: FestivalQuery,
-  load = loadCalendarYear,
+  load = loadFestivalYear,
   list: readonly Festival[] = festivals,
 ): Promise<FestivalLines> {
   if (Number.isNaN(now.getTime())) {

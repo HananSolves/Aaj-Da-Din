@@ -8,7 +8,7 @@ const KB = 1024;
 const budgets = {
   jsGzip: 25 * KB,
   cssGzip: 8 * KB,
-  packageExPhotos: 100 * KB,
+  packageExPhotos: 300 * KB,
 };
 
 const outputs = [".output/chrome-mv3", ".output/firefox-mv3"];

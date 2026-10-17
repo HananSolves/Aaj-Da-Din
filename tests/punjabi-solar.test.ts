@@ -1,29 +1,25 @@
-import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { formatDesi, toDesi } from "../src/calendars/desi.ts";
-import type { CalendarYear } from "../src/calendars/year-data.ts";
+import { formatPunjabiSolar, toPunjabiSolar } from "../src/calendars/punjabi-solar.ts";
+import type { SolarYear } from "../src/calendars/year-data.ts";
 import { sangrand2026 } from "./fixtures/calendar.ts";
+import { readCalendarFile } from "./fixtures/years.ts";
 
-function load(year: number): CalendarYear {
-  return JSON.parse(
-    readFileSync(new URL(`../data/calendar/${year}.json`, import.meta.url), "utf8"),
-  );
-}
+const load = (year: number) => readCalendarFile<SolarYear>("punjabi-solar", year);
 
 const data = new Map(Array.from({ length: 11 }, (_, i) => [2026 + i, load(2026 + i)] as const));
-const dataFor = (date: Date): CalendarYear => {
+const dataFor = (date: Date): SolarYear => {
   const found = data.get(date.getFullYear());
   if (!found) throw new Error(`no data for ${date.getFullYear()}`);
   return found;
 };
-const desi = (date: Date) => toDesi(date, dataFor(date));
+const punjabiSolar = (date: Date) => toPunjabiSolar(date, dataFor(date));
 
 const local = (iso: string) => {
   const [y, m, d] = iso.split("-").map(Number);
   return new Date(y ?? 0, (m ?? 1) - 1, d ?? 1);
 };
 
-// Punjab Data's 2026 jantri, read 2026-10-15, writes each sangrand as day 1 of its desi month,
+// Punjab Data's 2026 jantri, read 2026-10-15, writes each sangrand as day 1 of its Punjabi solar month,
 // for example "1 Vaisakh (Sangrand)" on 14 April:
 // https://www.punjabdata.com/Nanakshahi-Calendar-2026-Punjabi-Jantri.aspx
 // Month numbers count Chet as 1. The page names them Maagh, Phagan, Chet, Vaisakh, Jeth, Harh,
@@ -34,7 +30,7 @@ describe("sangrand days", () => {
   it.each(sangrand2026.map((iso, i) => [iso, monthOfSangrand2026[i]] as const))(
     "%s is day 1 of month %i",
     (iso, month) => {
-      expect(desi(local(iso))).toEqual({ day: 1, month });
+      expect(punjabiSolar(local(iso))).toEqual({ day: 1, month });
     },
   );
 
@@ -46,7 +42,7 @@ describe("sangrand days", () => {
         local(iso).getMonth(),
         local(iso).getDate() - 1,
       );
-      const result = desi(before);
+      const result = punjabiSolar(before);
       expect(result.month).toBe(month === 1 ? 12 : (month ?? 1) - 1);
       expect(result.day).toBeGreaterThanOrEqual(29);
       expect(result.day).toBeLessThanOrEqual(32);
@@ -56,17 +52,17 @@ describe("sangrand days", () => {
 
 describe("year boundary", () => {
   it("continues Poh from 2026 into 2027", () => {
-    expect(desi(local("2026-12-31"))).toEqual({ day: 16, month: 10 });
-    expect(desi(local("2027-01-01"))).toEqual({ day: 17, month: 10 });
+    expect(punjabiSolar(local("2026-12-31"))).toEqual({ day: 16, month: 10 });
+    expect(punjabiSolar(local("2027-01-01"))).toEqual({ day: 17, month: 10 });
   });
 });
 
 describe("every day from 2026 to 2036", () => {
   it("has a day of 1 to 32 and advances one day at a time", () => {
-    let previous = desi(local("2026-01-01"));
+    let previous = punjabiSolar(local("2026-01-01"));
     expect(previous.day).toBeGreaterThanOrEqual(1);
     for (let date = local("2026-01-02"); date.getFullYear() <= 2036; ) {
-      const current = desi(date);
+      const current = punjabiSolar(date);
       expect(current.day).toBeGreaterThanOrEqual(1);
       expect(current.day).toBeLessThanOrEqual(32);
       const sameMonth = current.month === previous.month && current.day === previous.day + 1;
@@ -82,20 +78,24 @@ describe("every day from 2026 to 2036", () => {
   });
 });
 
-describe("formatDesi", () => {
+describe("formatPunjabiSolar", () => {
   it("formats the day and month name", () => {
-    expect(formatDesi(local("2026-10-17"), dataFor(local("2026-10-17")))).toBe("1 Katak");
-    expect(formatDesi(local("2026-10-16"), dataFor(local("2026-10-16")))).toBe("30 Assu");
-    expect(formatDesi(local("2026-12-31"), dataFor(local("2026-12-31")))).toBe("16 Poh");
+    expect(formatPunjabiSolar(local("2026-10-17"), dataFor(local("2026-10-17")))).toBe("1 Katak");
+    expect(formatPunjabiSolar(local("2026-10-16"), dataFor(local("2026-10-16")))).toBe("30 Assu");
+    expect(formatPunjabiSolar(local("2026-12-31"), dataFor(local("2026-12-31")))).toBe("16 Poh");
   });
 });
 
 describe("errors", () => {
   it("throws on an invalid date", () => {
-    expect(() => toDesi(new Date(Number.NaN), dataFor(local("2026-01-01")))).toThrow(RangeError);
+    expect(() => toPunjabiSolar(new Date(Number.NaN), dataFor(local("2026-01-01")))).toThrow(
+      RangeError,
+    );
   });
 
   it("throws when the data is for a different year", () => {
-    expect(() => toDesi(local("2027-01-01"), dataFor(local("2026-01-01")))).toThrow(RangeError);
+    expect(() => toPunjabiSolar(local("2027-01-01"), dataFor(local("2026-01-01")))).toThrow(
+      RangeError,
+    );
   });
 });

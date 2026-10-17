@@ -7,7 +7,7 @@
       "!.wxt",
       "!.output",
       "!.fallow",
-      "!data/calendar/*.json",
+      "!data/calendar",
       "!docs",
       "!blueprint/.state"
     ]

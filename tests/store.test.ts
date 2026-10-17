@@ -7,7 +7,7 @@ vi.mock("wxt/browser", () => ({ browser: { storage: { sync } } }));
 
 const MIRROR_KEY = "tarikh:settings";
 const stored: Settings = {
-  schemaVersion: 4,
+  schemaVersion: 5,
   calendars: ["hijri", "gregorian"],
   theme: "raat",
   dateStyle: "centered",
@@ -18,7 +18,7 @@ const stored: Settings = {
   showFestivalLines: false,
   showFact: true,
 };
-const mirrored: Settings = { ...stored, calendars: ["desi"], theme: "chitta" };
+const mirrored: Settings = { ...stored, calendars: ["punjabi-solar"], theme: "chitta" };
 
 let local: Map<string, string>;
 
@@ -44,7 +44,7 @@ describe("loadSettings", () => {
   it.each([
     ["nothing stored", {}],
     ["garbage", { settings: "garbage" }],
-    ["a newer schemaVersion", { settings: { ...stored, schemaVersion: 5 } }],
+    ["a newer schemaVersion", { settings: { ...stored, schemaVersion: 6 } }],
     ["an unknown calendar", { settings: { ...stored, calendars: ["julian"] } }],
   ])("returns null and leaves the mirror alone for %s", async (_name, result) => {
     sync.get.mockResolvedValue(result);
@@ -116,7 +116,7 @@ describe("saveSettings", () => {
   });
 
   it("refuses to overwrite a newer schema, leaving storage and the mirror alone", async () => {
-    sync.get.mockResolvedValue({ settings: { ...stored, schemaVersion: 5 } });
+    sync.get.mockResolvedValue({ settings: { ...stored, schemaVersion: 6 } });
     local.set(MIRROR_KEY, JSON.stringify(mirrored));
     await expect(saveSettings(stored)).rejects.toBeInstanceOf(NewerSettingsError);
     expect(sync.set).not.toHaveBeenCalled();

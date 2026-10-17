@@ -1,27 +1,54 @@
-import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
+import { dataCalendars } from "../scripts/calendars.ts";
 import {
   type CalendarYear,
   loadCalendarYear,
+  loadFestivalYear,
   localIso,
   locate,
 } from "../src/calendars/year-data.ts";
+import { firstYear, lastYear, readCalendarFile } from "./fixtures/years.ts";
 
-const years = Array.from({ length: 11 }, (_, i) => 2026 + i);
+const years = Array.from({ length: lastYear - firstYear + 1 }, (_, i) => firstYear + i);
 
 function fromFile(year: number): CalendarYear {
-  return JSON.parse(
-    readFileSync(new URL(`../data/calendar/${year}.json`, import.meta.url), "utf8"),
-  );
+  return {
+    ...readCalendarFile<CalendarYear>("punjabi-solar", year),
+    ...readCalendarFile<CalendarYear>("bikrami", year),
+  };
 }
 
 describe("loadCalendarYear", () => {
-  it.each(years)("returns the bundled data for %i", async (year) => {
-    expect(await loadCalendarYear(year)).toEqual(fromFile(year));
+  describe.each(dataCalendars)("$id", ({ id }) => {
+    it.each(years)("returns the bundled data for %i", async (year) => {
+      expect(await loadCalendarYear(id, year)).toEqual(readCalendarFile(id, year));
+    });
+
+    it.each([2025, 2037])("returns undefined for %i, which has no file", async (year) => {
+      expect(await loadCalendarYear(id, year)).toBeUndefined();
+    });
   });
 
-  it.each([2025, 2037])("returns undefined for %i, which has no file", async (year) => {
-    expect(await loadCalendarYear(year)).toBeUndefined();
+  it("gives each calendar only its own keys", async () => {
+    expect(Object.keys((await loadCalendarYear("punjabi-solar", 2026)) ?? {})).toEqual([
+      "year",
+      "sangrand",
+    ]);
+    expect(Object.keys((await loadCalendarYear("bikrami", 2026)) ?? {})).toEqual([
+      "year",
+      "tithi",
+      "months",
+    ]);
+  });
+});
+
+describe("loadFestivalYear", () => {
+  it.each(years)("merges both calendars' data for %i", async (year) => {
+    expect(await loadFestivalYear(year)).toEqual(fromFile(year));
+  });
+
+  it.each([2025, 2037])("returns undefined for %i, which has no files", async (year) => {
+    expect(await loadFestivalYear(year)).toBeUndefined();
   });
 });
 

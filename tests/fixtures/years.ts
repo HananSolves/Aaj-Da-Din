@@ -1,14 +1,23 @@
 import { readFileSync } from "node:fs";
-import type { CalendarYear } from "../../src/calendars/year-data.ts";
+import type { CalendarYear, DataCalendarId } from "../../src/calendars/year-data.ts";
 
 export const firstYear = 2026;
 export const lastYear = 2036;
 
+/** Reads one calendar's committed file for `year`, exactly as the extension bundles it. */
+export function readCalendarFile<T>(calendar: DataCalendarId, year: number): T {
+  const file = new URL(`../../data/calendar/${calendar}/${year}.json`, import.meta.url);
+  return JSON.parse(readFileSync(file, "utf8")) as T;
+}
+
 const years = new Map(
   Array.from({ length: lastYear - firstYear + 1 }, (_, i) => {
     const year = firstYear + i;
-    const file = new URL(`../../data/calendar/${year}.json`, import.meta.url);
-    return [year, JSON.parse(readFileSync(file, "utf8")) as CalendarYear] as const;
+    const merged: CalendarYear = {
+      ...readCalendarFile<CalendarYear>("punjabi-solar", year),
+      ...readCalendarFile<CalendarYear>("bikrami", year),
+    };
+    return [year, merged] as const;
   }),
 );
 

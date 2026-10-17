@@ -1,5 +1,5 @@
 import { en } from "../strings/en.ts";
-import { type CalendarYear, locate } from "./year-data.ts";
+import { type LunisolarYear, locate } from "./year-data.ts";
 
 export interface BikramiDate {
   /** 1 to 12, where 1 is Chet. */
@@ -16,7 +16,7 @@ const MS_PER_DAY = 86_400_000;
 
 // Gregorian year + 57 from Chaitra Shukla 1, + 56 before it. In a year with an adhik Chaitra
 // (2029) the new year turns in the nija month, the last Chaitra entry, as Drik Panchang dates it.
-function samvatChangeIndex(data: CalendarYear): number {
+function samvatChangeIndex(data: LunisolarYear): number {
   const chaitra = data.months.findLast(
     ([start, month, adhik]) => month === 0 && adhik === 0 && start.startsWith(`${data.year}-`),
   );
@@ -35,7 +35,7 @@ function samvatChangeIndex(data: CalendarYear): number {
 }
 
 /** Converts the local calendar date of `date` to the Bikrami (lunisolar, Purnimanta) calendar. */
-export function toBikrami(date: Date, data: CalendarYear): BikramiDate {
+export function toBikrami(date: Date, data: LunisolarYear): BikramiDate {
   const { iso, dayIndex } = locate(date, data);
   const entry = data.months[data.months.findLastIndex(([start]) => start <= iso)];
   const tithi = data.tithi[dayIndex];
@@ -53,7 +53,7 @@ export function toBikrami(date: Date, data: CalendarYear): BikramiDate {
 }
 
 /** Formats the Bikrami date as, for example, "Assu Vadi 1, Samvat 2083". */
-export function formatBikrami(date: Date, data: CalendarYear): string {
+export function formatBikrami(date: Date, data: LunisolarYear): string {
   const { month, adhik, paksha, day, samvat } = toBikrami(date, data);
   const name = en.punjabiMonths[month - 1];
   return `${adhik ? `${en.adhik} ` : ""}${name} ${en[paksha]} ${day}, ${en.samvat} ${samvat}`;

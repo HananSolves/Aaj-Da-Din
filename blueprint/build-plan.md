@@ -36,7 +36,7 @@ not listed here.
 ### South Asia expansion
 
 - [x] 20. **Rename to Tarikh** - package and manifest names, page title, strings, storage key prefix, Firefox ID placeholder, README, GitHub repository.
-- [ ] 21. **Calendar registry and per-calendar data** - each calendar declares its reference place and rules; one generated JSON per calendar per year; the page loads only enabled calendars; package budget to 300 KB; Desi becomes "Punjabi solar".
+- [x] 21. **Calendar registry and per-calendar data** - each calendar declares its reference place and rules; one generated JSON per calendar per year; the page loads only enabled calendars; package budget to 300 KB; Desi becomes "Punjabi solar".
 - [ ] 22. **Intl and arithmetic calendars** - Solar Hijri (Afghan month names), Indian National (Saka), Bangla (Bangladesh revised).
 - [ ] 23. **Hindu lunisolar variants** - Vikram Samvat Purnimanta (Hindi names), Vikram Samvat Amanta Kartikadi (Gujarati), Shaka Amanta (Marathi, Kannada, Telugu, Konkani).
 - [ ] 24. **Tamil and Malayalam calendars** - Tamil solar and Malayalam (Kollam), with their sankranti day rules and reference places.
