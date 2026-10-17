@@ -103,7 +103,8 @@ of the switch; the skills and `ai-interaction.md` only point back here.
   calendar conversions, date rules, festival and daily-selection logic, settings
   migrations, content and JSON validators. These have assertable inputs and outputs
   and real edge cases (month and year boundaries, leap years, missing or malformed
-  data). Calendar tests assert against SGPC jantri / panchang fixtures.
+  data). Calendar tests assert against fixtures from each
+  calendar's published almanac (SGPC jantri, panchangs, official national calendars).
 - **What not to test:** UI components and integration-level surfaces (render or
   export routes, anything driving a real browser or external service). Verify those
   with a screenshot and the build, not brittle unit tests.

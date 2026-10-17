@@ -1,211 +1,182 @@
-# Aaj Da Din - Project Overview
+# Tarikh - Project Overview
 
-<!-- blueprint:source-hash 4e86f23b63361c331964fe5a38d89c49917d7485cc946f611ef9356650f88206 -->
+<!-- blueprint:source-hash fa66f0dd24ec4bb2d998aa971f72571959183e97c823e3f1bfffe57a97cd4dce -->
 
-> A Punjabi new-tab browser extension (Chrome, Edge, Firefox): today's date in the calendars Punjabis use, today's and tomorrow's festivals, a daily photo of Punjab and a daily fact. Fast, private, open source, works offline.
+> A new-tab browser extension (Chrome, Edge, Firefox) for all of South Asia and its diaspora: today's date in the calendars a person follows, festivals for their communities, a daily photo of South Asia and a daily fact. Fast, private, open source, works offline.
 
-_Generated from `blueprint/project-plan.md` and `blueprint/build-plan.md`. Do not hand-edit; change the plans and re-run `/overview`. Section references like "plan §4.4" point into `project-plan.md`._
+_Generated from `blueprint/project-plan.md` and `blueprint/build-plan.md`. Do not hand-edit; change the plans and re-run `/overview`. "Plan §x" points into `project-plan.md`._
 
 ## Problem
 
-Punjabis, East and West, Sikh, Hindu and Muslim, follow several calendars at once, and a browser's new tab shows none of the Punjabi ones. Aaj Da Din replaces the new tab with today's date in those calendars, nearby festivals, a Punjab photo and a fact. The new tab opens constantly, so it must also be fast, small and trustworthy: no tracking, minimum permissions, open source.
+People from Afghanistan, Bangladesh, Bhutan, India, the Maldives, Nepal, Pakistan and Sri Lanka, at home and abroad, follow several calendars at once (national or regional, religious, Gregorian), and a browser's new tab shows none of them. Tarikh ("date"; formerly Aaj Da Din, a Punjabi-only new tab) shows each person their own calendars and festivals. The new tab opens constantly, so it must be fast, small and trustworthy.
 
-> TODO: the plan has no explicit problem statement; this paragraph is a distillation. Confirm or sharpen it in plan §1.
-
-Guiding principles, in priority order: (1) fast and small, (2) private and trustworthy, (3) correct (a wrong date or fact costs more trust than a missing feature), (4) neutral and inclusive (East/West Punjab, all three faiths, no politics), (5) works offline from bundled data.
+Principles, in priority order: (1) fast and small, (2) private and trustworthy, (3) correct, every date has a published source, (4) neutral and inclusive across countries, religions and communities, never political or controversial (no disputed territories including Kashmir, wars, partitions, identity disputes, maps or borders), (5) works offline from bundled data.
 
 ## Users
 
-- **Punjabi diaspora on desktop** (Canada, UK, US, Australia, Gulf), ages ~25-55, from India and Pakistan Punjab. Primary audience.
-- **Urban Punjab users** and **community institutions**.
-- Browsers: Chrome, Edge, Firefox. Other Chromium browsers (Brave, Vivaldi) install from the Chrome Web Store. Not supported: Opera (blocks new-tab override), Safari, Samsung Internet.
-- No accounts or user tiers.
+- **South Asians and the diaspora** on desktop (Gulf, UK, Canada, US, Australia, Europe and beyond), ages ~25-55; also users in the region and community institutions.
+- They choose **communities** (cultural and linguistic, cross-border), never a country or religion; a Punjabi can be Indian or Pakistani.
+- Browsers: Chrome, Edge, Firefox (other Chromium browsers via the Chrome Web Store). Not Opera, Safari or Samsung Internet. No accounts or tiers.
 
 ## Usage model
 
-- Client-side extension that renders fully offline from bundled data. Network use is limited to fetching public static JSON and photos from Cloudflare Pages after first paint.
-- Collects nothing: no analytics, telemetry, accounts or backend; no server-side user data.
-- Non-requirements: no accounts, no backend, no terms-and-conditions screen or accept step. No expected user count is set; the sponsor tile waits for real numbers (~10k weekly users).
+- Client-side extension, fully offline from bundled data; network use is public static JSON and photos from Cloudflare Pages, after first paint.
+- Collects nothing: no analytics, telemetry, accounts, backend or geolocation. Community choices stay in browser settings.
+- Non-requirements: accounts, backend, terms screen or accept step. No user count is set; the sponsor tile waits for ~10k weekly users.
 
 ## Features
 
-Current milestone: **v0**. Scaffold, CI, size check and the Gregorian formatter already exist and are not features. Order follows `build-plan.md`; the headline feature is correct multi-calendar dates (items 1-4).
+Milestone: **v0**. Line order in `build-plan.md` is build order; numbers are stable IDs. Headline: correct dates in many calendars.
 
-**v0 - internal prototype**
+**v0 (Punjabi calendars, the engine proof):** 1 Nanakshahi ✓ · 2 Hijri ✓ · 3 Desi and Bikrami data build ✓ · 4 Desi and Bikrami lookups ✓ · 5 Festival resolver (cultural + Sikh) ✓ · 6 Bare new tab ✓ · **7 Bundled photos and placeholder fact** with v0 sign-off (three browsers, offline, first paint < 100 ms, budgets in CI).
 
-1. **Nanakshahi calendar** - original 2003 fixed-month arithmetic.
-2. **Hijri calendar** - umm al-Qura via `Intl`, user offset -1/0/+1.
-3. **Desi and Bikrami data build** - `scripts/build-calendar.ts` (astronomy-engine, dev-only) emits per-year JSON for 2026-2036, checked against the SGPC jantri and a panchang.
-4. **Desi and Bikrami lookups** - read the current year's file (next year's in late December); resolves the sangrand-day and adhik-month questions.
-5. **Festival resolver (cultural + Sikh)** - festival rules over the calendar lookups, and "Today:" / "Tomorrow:" lines using SGPC dates.
-6. **Bare new tab** - five calendars, festival lines, one theme, solid background, instant paint from the settings mirror.
-7. **Bundled photos and placeholder fact** - 2-3 photos with credit, one fact, daily selection, v0 sign-off checks.
+**V1 done so far:** 8 Settings store ✓ · 9 Themes and date styles ✓ · 10 Hindu and Muslim sets ✓ · 11 Settings panel ✓ · 16 Support and feedback ✓ · 17 Accessibility pass ✓.
 
-**V1 - public launch**
+**South Asia expansion (next, in order):**
 
-8. **Settings store** - `storage.sync`, `schemaVersion`, migrations, `localStorage` mirror.
-9. **Themes and date styles** - 6-8 themes, 3 date styles, solid-colour mode.
-10. **Hindu and Muslim sets** - joined lines ("Today: Diwali · Bandi Chhor Divas"), "expected" labels for Muslim dates, Gurpurab source switch. Hindu dates are sourced lists for 2026-2030 only; 2031-2036 are still to be added.
-11. **Settings panel** - lazy-loaded native dialog opened from a gear; calendars on/off and order, look, festival sets, Gurpurab source, Hijri offset, Today/Tomorrow lines, fact toggle, About (version and repository link); changes apply and save at once.
-12. **Onboarding** - three skippable screens; default sets follow chosen calendars.
-13. **Content pipeline** - CSVs, build and optimise scripts, verified-only filter, post-paint remote refresh.
-14. **Daily photo** - 60 photos, 6-8 bundled, tomorrow's prefetched.
-15. **Daily fact** - 120 verified facts.
-16. **Support and feedback** - Patreon ask card, Support link, Report a mistake link.
-17. **Accessibility pass** - WCAG 2.2 AA.
-18. **Content site and privacy policy** - Cloudflare Pages.
-19. **Store release 1.0.0** - listings for the three stores.
+20. **Rename to Tarikh** - names, title, strings, storage key prefix, Firefox ID placeholder, README.
+21. **Calendar registry and per-calendar data** - reference place and rules per calendar, one JSON per calendar per year, load only enabled calendars, package budget 300 KB, Desi becomes "Punjabi solar".
+22. **Intl and arithmetic calendars** - Solar Hijri (Afghan month names), Indian National (Saka), Bangla (revised).
+23. **Hindu lunisolar variants** - Vikram Samvat Purnimanta (Hindi names), VS Amanta Kartikadi (Gujarati), Shaka Amanta (Marathi, Kannada, Telugu, Konkani).
+24. **Tamil and Malayalam** solar calendars.
+25. **Eastern solar calendars** - Bengali (traditional), Odia, Assamese.
+26. **Nepali calendars** - Bikram Sambat, Nepal Sambat.
+27. **Sinhala calendar** - months, Poya days, Buddhist Era.
+28. **Bhutanese lunar calendar** - blocked until a verifiable source is found.
+29. **Parsi calendars** - Shahenshahi, Kadmi, Fasli.
+30. **Communities** - list, suggested calendars and sets, settings field, Settings section.
+31. **Religion sets** - add Christian, Buddhist, Jain, Zoroastrian.
+32-34. **Community festival sets** - north, west and Afghanistan; south and Sri Lanka; east, Nepal and Bhutan.
+35. **National days** - opt-in per country, neutral.
 
-**v0 is done when:** loads unpacked in Chrome, Edge and Firefox with no console errors; calendar tests pass against verified 2026-2027 fixtures; first paint under 100 ms with no wrong-theme flash; size budgets enforced in CI; fully works offline.
+**Launch:** 12 Onboarding (community picker, live preview) · 13 Content pipeline · 14 Daily photo (60, balanced across the eight countries) · 15 Daily fact (120 verified) · 18 Content site and privacy policy · 19 Store release 1.0.0.
 
-**Explicitly not in V1:** countdown, sponsor tile, analytics, Roman Punjabi/Gurmukhi/Shahmukhi, Patreon Shop items, web fonts, search box, Rust/WASM, Opera. Deferred: V1.x (more content, tithi line, countdown, custom yearly events, Shop items), V2 (Punjabi scripts, sponsor tile), V3 (motion, music, Opera revisit). Never: analytics, accounts, a backend, donation popups, remote code, Pexels/Pixabay/Unsplash photos. Do not add deferred or dropped items without asking.
+**Not in V1:** countdown, sponsor tile, analytics, any UI language but English, Shop items, web fonts, search box, Rust/WASM, Opera, per-city date computation, geolocation. V1.x: more content, tithi line, countdown, custom yearly events, "prefer my communities" photos and facts, per-city dates (to reconsider in the future), Shop items. V2: sponsor tile. V3: motion, music, Opera. Never: tracking, accounts, backend, donation popups, remote code, Pexels/Pixabay/Unsplash, political content. Ask before adding deferred items.
 
-### Calendar and festival rules
+### Calendars (plan §3.4.1)
 
-| Calendar | Source at runtime | For |
-|---|---|---|
-| Gregorian | `Intl` | everyone |
-| Desi (solar) | generated table | sangrand; both sides of Punjab |
-| Bikrami (lunisolar, Purnimanta) | generated table | Punjabi Hindus, festival dating |
-| Nanakshahi (2003) | arithmetic | Sikhs |
-| Hijri | `Intl` umalqura + offset | Punjabi Muslims |
+| Calendar | Runtime source | Reference place | Status |
+|---|---|---|---|
+| Gregorian | `Intl` | - | done |
+| Hijri (umm al-Qura, ±1) | `Intl` + offset | - | done |
+| Punjabi solar (Desi) | generated | Amritsar | done |
+| Nanakshahi (2003) | arithmetic | - | done |
+| Bikrami (Punjabi names, Purnimanta) | generated | Amritsar | done |
+| Solar Hijri; Indian National (Saka) | `Intl` (`persian`, `indian`) | - | 22 |
+| Bangla (Bangladesh revised) | arithmetic | - | 22 |
+| VS Purnimanta; VS Amanta Kartikadi; Shaka Amanta | generated | New Delhi; Ahmedabad; per variant | 23 |
+| Tamil; Malayalam (Kollam) | generated | Chennai; Thiruvananthapuram | 24 |
+| Bengali (traditional); Odia; Assamese | generated | Kolkata; Bhubaneswar; Guwahati | 25 |
+| Nepali Bikram Sambat; Nepal Sambat | generated | Kathmandu | 26 |
+| Sinhala | generated | Colombo | 27 |
+| Bhutanese lunar | generated | Thimphu | 28 |
+| Parsi (Shahenshahi, Kadmi, Fasli) | arithmetic | - | 29 |
 
-- **Nanakshahi months (fixed):** Chet 14 Mar/31, Vaisakh 14 Apr/31, Jeth 15 May/31, Harh 15 Jun/31, Sawan 16 Jul/31, Bhadon 16 Aug/30, Assu 15 Sep/30, Katak 15 Oct/30, Maghar 14 Nov/30, Poh 14 Dec/30, Magh 13 Jan/30, Phagun 12 Feb/30 (31 in Gregorian leap years). NS year = Gregorian − 1468 on/after 14 March, − 1469 before.
-- **Desi (solar):** a sankranti belongs to the sunrise-to-sunrise day (Amritsar / IST) that contains it, and the sangrand day is day 1 of the new month. Shown as day and month only (`25 Assu`), no year.
-- **Bikrami (lunisolar, Purnimanta):** Punjabi month names, then paksha and day, then Samvat (`Assu Vadi 1, Samvat 2083`). Tithi is read at sunrise: 1-15 is Sudi, 16-30 is Vadi (day = tithi - 15). An adhik month takes an `Adhik` prefix (`Adhik Jeth Sudi 3`). Samvat = Gregorian + 57 from Chaitra Shukla 1 (the day Pratipada begins, 19 March 2026), + 56 before; in an adhik-Chaitra year (2029) it turns in the nija month, as Drik Panchang dates it.
-- **Date rules:** published (jantri/IST) date used wherever the user is; day changes at local midnight; no geolocation; Hijri shows the civil-day date, not sunset-based.
-- **Festival sets:** Punjabi cultural (always on: Lohri, Maghi, Basant Panchami, Vaisakhi, Teeyan); Sikh (Prakash/Shaheedi Purabs, Khalsa Sajna Divas, Bandi Chhor Divas, Hola Mohalla, Gurgaddi days, Shaheedi Jor Mela); Hindu (Maha Shivratri, Holi, Ram Navami, Raksha Bandhan, Janmashtami, Dussehra, Karva Chauth, Diwali); Muslim (Ramadan begins, Eid al-Fitr, Eid al-Adha, Islamic New Year, Ashura; labelled "expected"). Neutrality: celebrated or observed days only, no political anniversaries. Gurpurab dates default to the SGPC jantri, switchable to Original Nanakshahi, source labelled.
-- **Festival dating:** each festival is a rule over the lookups: a fixed date, a sangrand (Lohri is the day before Maghi), a Bikrami tithi in the nija month, or a list of sourced dates where the sunrise tithi cannot give the SGPC date (Bandi Chhor Divas, so it shows only for sourced years). A tithi at two sunrises counts on the first day, and one at no sunrise on the day it begins. A sweep over 2026-2036 guards the gaps. Hindu festivals are all `dates` lists (Drik Panchang, New Delhi, Smarta where it lists both) for 2026-2030, because the sunrise tithi is a day off for festivals dated by the midnight, afternoon or evening tithi; a year with no listed date shows no Hindu line. Muslim festivals are a `hijri` rule on the Hijri offset date and read "(expected)". Five Sikh Gurpurabs carry an `original` fixed Gregorian date used under Original Nanakshahi, and the line names that source; Hola Mohalla, Bandi Chhor Divas and Guru Nanak's Prakash were movable in 2003 and do not change.
-- **Defaults from onboarding calendars:** Nanakshahi -> Sikh, Bikrami -> Hindu, Hijri -> Muslim. Skipping onboarding applies Gregorian + Desi + Nanakshahi, default theme, photo on.
-- **Correctness:** tested against SGPC jantri / panchang fixtures. Never "fix" a date without a source.
+- **Reference place rule:** each calendar is computed for the place its almanac is published for; the day changes at the user's local midnight (someone from Lahore in Sydney sees, on Sydney's 18 October, the Amritsar/Lahore entry for 18 October). No per-city computation, no geolocation. Every calendar shows the civil-day date (Hijri ignores sunset).
+- `Intl` calendars use numeric parts only; month names come from `en.ts`. Month names follow each tradition's transliteration (Katak, Kartik, Aippasi).
+- **Settled v0 rules:** Nanakshahi months are fixed (Chet 14 Mar/31, Vaisakh 14 Apr/31, Jeth 15 May/31, Harh 15 Jun/31, Sawan 16 Jul/31, Bhadon 16 Aug/30, Assu 15 Sep/30, Katak 15 Oct/30, Maghar 14 Nov/30, Poh 14 Dec/30, Magh 13 Jan/30, Phagun 12 Feb/30, 31 in leap years); NS = Gregorian − 1468 on/after 14 March, − 1469 before. Desi: a sankranti belongs to the sunrise-to-sunrise day (Amritsar/IST) containing it, sangrand is day 1, no year shown. Bikrami: `Assu Vadi 1, Samvat 2083`, sunrise tithi (1-15 Sudi, 16-30 Vadi), `Adhik` prefix, Samvat = Gregorian + 57 from Chaitra Shukla 1 (+ 56 before; nija month in an adhik-Chaitra year).
+- **Correctness:** fixtures from each calendar's published almanac. No verifiable source means a blocker, never unverified dates.
+
+### Communities and festivals (plan §3.4.3-§3.4.7)
+
+- **Communities (draft, 24):** Punjabi, Sindhi, Kashmiri, Pashtun, Baloch, Afghan, Hindi-speaking north, Rajasthani, Gujarati, Marathi, Konkani, Kannada, Telugu, Tamil, Malayali, Bengali, Odia, Assamese, Nepali, Newar, Bhutanese, Sinhala, Maldivian, Parsi. Each suggests calendars and its community festival set; Gregorian always.
+- **Religion sets:** Hindu, Muslim ("expected"), Sikh (SGPC default, Original Nanakshahi switch), Christian, Buddhist (per-country Vesak), Jain, Zoroastrian. Suggested from calendars (Nanakshahi → Sikh, Hindu lunisolar → Hindu, Hijri or Solar Hijri → Muslim, Sinhala or Bhutanese → Buddhist, Parsi → Zoroastrian); Christian and Jain picked directly. Religion is never asked.
+- **Festival rules:** a fixed date, a sangrand (or the day before), a tithi in the nija month, a `hijri` rule on the offset date, or an explicit sourced `dates` list (works before or without a calendar's date line). A tithi at two sunrises counts on the first day, at none on the day it begins; a 2026-2036 sweep guards gaps. Hindu dates are Drik Panchang lists (New Delhi, Smarta) for 2026-2030. Five Gurpurabs carry an `original` Nanakshahi date. A festival in two sets appears once per line. Neutrality: observed days only, no political anniversaries or war days.
+- **National days:** opt-in per country (off by default, never inferred), each country's own official days only, never war, victory, defence or martyrs' days; "Today: Independence Day (Pakistan)", no flags or greetings, no ask card.
+- **Horizon and sourcing:** computed calendars 2026-2036; sourced lists as far as almanacs publish (at least 2026-2028), extended via remote JSON. Claude drafts from named almanacs with links, the owner verifies, only verified data ships.
 
 ## Data model
 
-No backend or database: bundled static data, a remote copy of it, and the user's settings in their browser.
+No backend: bundled static data, a remote copy, and settings in the browser.
 
-### Settings (`storage.sync`, mirrored to `localStorage` key `add:settings`)
+### Settings (`storage.sync` key `settings`, mirrored to `localStorage` `add:settings`)
 
-Existing in `src/settings/types.ts` (schema 4):
+Schema 4 in `src/settings/types.ts`:
 
-- `schemaVersion` (4) - bump on shape change and add a migration in `migrations.ts`
-- `calendars` (`CalendarId[]`) - enabled calendars in display order; `CalendarId` = `gregorian | desi | bikrami | nanakshahi | hijri`
-- `theme` (`ThemeId`) - `chitta | raat | sarson | phulkari | mitti | neela`; with nothing stored, `prefers-color-scheme` picks `chitta` or `raat`
-- `dateStyle` (`list | centered | compact`) - layout only
-- `background` (`photo | solid`) - stored now, read by the photo layer (item 14); no visible effect before then
-- `hijriOffset` (-1 | 0 | 1) - labelled "Match your local mosque"; it also moves the Muslim festival lines
-- `festivalSets` (`FestivalSet[]`) - enabled sets from `cultural | hindu | sikh | muslim`, any subset including none; a v2 value migrates to `cultural` + `sikh`
-- `gurpurabSource` (`sgpc | nanakshahi`) - `sgpc` by default; `nanakshahi` is Original Nanakshahi (2003)
-- `showFestivalLines` (boolean) - show the Today/Tomorrow lines; `true` by default and for every migrated value
-- `showFact` (boolean) - show the daily fact; `true` by default; stored now, read by the fact (item 15)
+- `schemaVersion` (4); `calendars` (`CalendarId[]`, display order; `gregorian | desi | bikrami | nanakshahi | hijri`)
+- `theme` (`chitta | raat | sarson | phulkari | mitti | neela`; with nothing stored `prefers-color-scheme` picks `chitta` or `raat`)
+- `dateStyle` (`list | centered | compact`); `background` (`photo | solid`, read by item 14)
+- `hijriOffset` (-1 | 0 | 1); `festivalSets` (subset of `cultural | hindu | sikh | muslim`); `gurpurabSource` (`sgpc | nanakshahi`)
+- `showFestivalLines`, `showFact` (booleans, default `true`)
 
-The store (item 8, `src/settings/{migrations,store}.ts`) keeps the whole `Settings` object in `storage.sync` under the single key `settings`. `parseSettings` validates it and the mirror alike (`parseMirror` is `null` for a missing or invalid value). Older schemas migrate in memory on read and are not written back; a newer schema is ignored (`null`), and `saveSettings` rejects with `NewerSettingsError` rather than overwrite it; `saveSettings` writes `storage.sync` before the mirror. The settings panel (item 11) is the first writer: each edit applies to the page, then saves. The new tab paints from the mirror, then re-renders if `storage.sync` differs. With no settings anywhere, v0 shows all five calendars and all four festival sets, while `defaultSettings` keeps Gregorian + Desi + Nanakshahi as the skip-onboarding default.
+Planned: item 21 widens `CalendarId`, item 30 adds `communities`, item 31 widens `festivalSets`, item 35 adds `nationalDays` (country codes), item 20 renames the mirror key prefix. Each bumps `schemaVersion` with a migration.
 
-> Locked: `storage.sync` holds settings only (100 KB total, 8 KB per item). Once published, users' synced settings outlive releases, so `schemaVersion` and its migration path must keep working.
+`parseSettings` validates `storage.sync` and the mirror. Older schemas migrate in memory on read, not written back; a newer schema is ignored and `saveSettings` rejects with `NewerSettingsError` rather than overwrite it; saving writes `storage.sync` before the mirror. The page paints from the mirror and re-renders if `storage.sync` differs. With no settings, v0 shows all five calendars and four sets; `defaultSettings` is Gregorian + Desi + Nanakshahi.
 
-### Local state (`storage.local`, 10 MB)
+> Locked: settings only in `storage.sync` (100 KB, 8 KB per item). After launch synced settings outlive releases, so the migration path must keep working.
 
-- Content cache (manifest and content JSON, refreshed after paint if over 24 h old)
-- `installDate` - local `YYYY-MM-DD`, written by the first new tab that finds none; the first donation ask is at least 14 days later
-- `lastAskDate` - local `YYYY-MM-DD`, written when the ask card is shown; at most one ask per 30 days (rules in plan §11)
-- Photos are cached with the Cache API (needs no permission)
+### Local state (`storage.local`)
 
-### CalendarYear (`data/calendar/<year>.json`, generated, 2026-2036)
+Content cache (refreshed after paint when over 24 h old); `installDate` and `lastAskDate` (local `YYYY-MM-DD`; ask rules plan §6 and §11). Photos in the Cache API.
 
-One file per year, bundled and also published at `/data/calendar/<year>.json`. Holds sangrand dates, tithis and Purnimanta month starts (Amritsar / IST). A date is looked up in the file for its own Gregorian year, so only the current year is loaded, plus next year's when Tomorrow falls on 1 January.
+### CalendarYear (`data/calendar/<year>.json`, 2026-2036)
 
-- `year` (number)
-- `sangrand` (13 sorted ISO dates) - index 0 is the previous December's sangrand (starts Poh), indices 1-12 are this year's; entry `i` starts desi month `((9 + i) % 12) + 1`, Chet = 1
-- `tithi` (number[], 1-30, one per day of the year) - tithi at sunrise
-- `months` (`[startISO, monthIndex, adhik 0|1][]`, 13-15 entries) - `monthIndex` 0 = Chaitra; the first entry is the month in progress on 1 January
+Today one file per year for Desi and Bikrami (Amritsar/IST), also published at `/data/calendar/<year>.json`; a date is looked up in its own Gregorian year's file (next year's when Tomorrow is 1 January).
 
-> Locked: this shape is read by `src/calendars/desi.ts` and `bikrami.ts`, and is also published remotely, so a change needs both updated together. The loader resolves `undefined` for a year with no file; the page must still render.
+- `year`; `sangrand` (13 sorted ISO dates; index 0 is the previous December's; entry `i` starts desi month `((9 + i) % 12) + 1`, Chet = 1)
+- `tithi` (number[], 1-30, sunrise tithi per day)
+- `months` (`[startISO, monthIndex, adhik 0|1][]`, 13-15 entries; `monthIndex` 0 = Chaitra; first entry is the month in progress on 1 January)
 
-### Photo (`content/photos.csv`; source of truth)
+> Locked until item 21: read by `desi.ts` and `bikrami.ts` and published remotely. Item 21 moves to `data/calendar/<calendar>/<year>.json`, one file per calendar, changing loader and remote paths together. A missing file resolves `undefined` and the page still renders.
 
-`id`, `title`, `location`, `author`, `author_url`, `source_url`, `license`, `license_url`, `retrieved_on`, `archive_url`, `changes`, `season_month`, `bundled`.
+### Photo (`content/photos.csv`)
 
-- Licences allowed: CC0, PD, CC BY, CC BY-SA only; sources: Wikimedia Commons and Openverse only (confirm the licence on the original source page).
-- `archive_url` is a web.archive.org snapshot, the proof of licence. `changes` e.g. "resized, converted to AVIF".
-- Originals in gitignored `photos-src/<id>.<ext>` (edited ones in `photos-src/edited/`); `scripts/optimise-photos.ts` re-fetches missing originals. Output: AVIF 1920 px (~120-200 KB) and 2560 px (~200-300 KB), hashed names, immutable cache.
-- Credit line bottom-right: `Title · Author · CC BY-SA 4.0`, linked to the source.
+`id, title, location, country, author, author_url, source_url, license, license_url, retrieved_on, archive_url, changes, month_tag, bundled`. Wikimedia Commons and Openverse only; CC0, PD, CC BY, CC BY-SA (confirm on the source page). Balanced across the eight countries; `country` is for balance only. No identifiable people, political imagery, flags, maps or borders. Originals in gitignored `photos-src/`; AVIF 1920 and 2560 px, hashed, immutable. Credit `Title · Author · Licence`, linked.
 
-### Fact (`content/facts.csv`; CC0)
+### Fact (`content/facts.csv`, CC0)
 
-`id`, `category`, `text_en`, `source_1`, `source_2`, `region`, `festival_tag`, `month_tag`, `status` (`draft | verified`), `added_on`, `verified_on`, `notes`.
+`id, category, text_en, source_1, source_2, region, festival_tag, month_tag, status (draft | verified), added_on, verified_on, notes`. Only `verified` ships; 120-220 characters, two reliable sources. Balanced across the region. Avoid doctrine comparisons, Partition, wars, disputed territories, 1984, separatism, Afghan politics, language politics, caste, India-Pakistan politics, living politicians, identity disputes, unverifiable superlatives.
 
-- **Only `status = verified` ships**; the build script filters on it. 120-220 characters, 1-2 sentences, two reliable sources (Wikipedia is not one). Balanced across East Punjab, West Punjab and diaspora. Avoid religious-doctrine comparison, Partition blame, 1984, separatism, caste, India-Pakistan politics, living politicians, unverifiable "first/biggest/oldest".
+### Daily selection (same for everyone)
 
-### Daily selection (same for everyone, no server)
+`dayNumber` = days since 2026-01-01 (local). Fact: one tagged for today's festival in the person's sets or the Gregorian month, else `facts[dayNumber % length]`. Photo: Gregorian-month-tagged plus untagged pool, `pool[dayNumber % length]`.
 
-- `dayNumber` = days since 2026-01-01 (local date).
-- Fact: one tagged for today's festival or desi month if any, else `facts[dayNumber % facts.length]`.
-- Photo: pool = photos tagged with the current desi month plus untagged, then `pool[dayNumber % pool.length]`.
+### Hosted content (`site/`)
 
-### Hosted content (`site/`, Cloudflare Pages)
-
-`/data/manifest.json` (short cache), `/data/calendar/<year>.json`, `/data/facts.json`, `/data/photos.json`, `/photos/<hash>-1920.avif` and `-2560.avif` (immutable). `Access-Control-Allow-Origin: *` on `/data/*`. If the network fails the extension falls back to bundled data and photos.
+`/data/manifest.json` (short cache), `/data/calendar/<calendar>/<year>.json`, `/data/festivals.json`, `/data/facts.json`, `/data/photos.json`, `/photos/<hash>-1920.avif` and `-2560.avif` (immutable); CORS `*` on `/data/*`. Network failure falls back to bundled data.
 
 ## Tech stack
 
-- **TypeScript** (strict) - compiles away, no runtime cost
-- **WXT** - per-browser manifests, store zips, dev reload; MV3 forced on every browser (WXT defaults Firefox to MV2)
-- **Vanilla DOM** - no UI framework, system font stack, critical CSS inlined, themes as CSS custom properties
-- **Biome** (lint + format), **Vitest** (`tests/**/*.test.ts`), **astronomy-engine** and an image optimiser (sharp or avifenc) - dev-only
-- **pnpm**, Node 22.18+; **GitHub Actions** runs typecheck, lint, test, build, size
-- **Runtime dependencies: zero.** Add one only when truly needed.
-- **Permissions: `storage` only.** No background script, no host permissions, no content scripts, no `alarms`. First run is detected in the new-tab page (no settings -> onboarding).
-- Firefox manifest: `gecko.id`, `data_collection_permissions: { required: ["none"] }`, `strict_min_version: "140.0"`.
-- Performance: instant paint from the `localStorage` mirror; onboarding, settings and the donation card are `import()`-lazy; reuse one `Intl.DateTimeFormat` per format; theme colour paints first, then the photo fades in (no fade under `prefers-reduced-motion`); pick 1920 or 2560 px by screen; prefetch tomorrow's photo into the Cache API; refresh content after paint via `requestIdleCallback` when the cache is over 24 h old.
-- **Size budgets (`pnpm size`, CI):** initial JS < 25 KB gzip, CSS < 8 KB gzip, package excluding photos < 100 KB, bundled photos ~1 MB, current-year calendar data a few KB.
-- Layout: `entrypoints/newtab/`, `src/{calendars,festivals,content,settings,ui,themes,strings}`, `data/calendar/`, `content/`, `scripts/`, `public/`, `site/`, `tests/`. All UI strings in `src/strings/en.ts` (English only in V1).
-- Licences: code GPL-3.0; facts and CSV metadata CC0 (`content/LICENSE`, not the photo files); photos keep their own licence; name and logo not licensed.
+- **TypeScript** (strict), **WXT** (MV3 forced on every browser), **vanilla DOM**, system fonts, inlined critical CSS, themes as CSS custom properties
+- **Biome**, **Vitest** (`tests/**/*.test.ts`), **astronomy-engine** and an image optimiser, all dev-only; **pnpm**, Node 22.18+; GitHub Actions runs `pnpm check`'s steps
+- **Zero runtime dependencies.** **Permissions: `storage` only**; no background, host or content scripts, no `alarms`. Firefox: `gecko.id`, `data_collection_permissions: none`, `strict_min_version: "140.0"`.
+- Performance: paint from the mirror; onboarding, settings, ask card and per-calendar formatters and data are `import()`-lazy; reuse `Intl.DateTimeFormat`s; theme colour first, then the photo (no fade under reduced motion); prefetch tomorrow's photo; refresh content after paint.
+- **Budgets (`pnpm size`):** initial JS < 25 KB gzip, CSS < 8 KB gzip, package excluding photos < 300 KB (currently enforced at 100 KB until item 21), bundled photos ~1 MB.
+- Layout: `entrypoints/newtab/`, `src/{calendars,communities,festivals,content,settings,ui,themes,strings}`, `data/calendar/`, `content/`, `scripts/`, `public/`, `site/`, `tests/`. All UI strings in `src/strings/en.ts`; English only.
+- Licences: code GPL-3.0; facts and CSV metadata CC0; photos their own; name and logo unlicensed.
 
 ## Monetization
 
-V1: **Patreon monthly membership only** (confirm Pakistan bank payout at signup). No sponsor tile, Shop items or Stripe. Ask rules:
-
-- Never a popup, modal or anything that blocks or delays the page
-- First ask at least 14 days after install; at most once a month
-- Small inline card, closed with one click, never covering the date
-- Prefer festival moments ("Vaisakhi mubarak! Aaj Da Din is made by one person. Support it →")
-- No "I already support" button; a quiet permanent "Support" link in Settings
-- Tone: warm, short, never guilt-tripping
+Patreon monthly only (confirm Pakistan payout). Never a popup; first ask 14+ days after install; at most monthly; small inline one-click card never over the date; prefer celebrations in the person's sets; quiet on mourning days (Shaheedi Purabs, Ashura, Good Friday) and national days; greetings only for celebrations ("Eid mubarak!", "Happy Diwali!"); general line "Built by one developer for South Asians everywhere"; no "I already support" button; quiet Support link in Settings.
 
 ## UI/UX
 
-Single page: the new tab (`entrypoints/newtab/`). Everything else is a lazy panel on it.
+One page, the new tab; everything else is a lazy panel.
 
-- **New tab** - date in the enabled calendars, Today/Tomorrow festival lines, daily photo with credit (bottom-right), daily fact, gradient behind text over photos
-- **Onboarding** (when no settings exist) - 1) welcome + calendar choice with live preview, 2) look (theme, date style, photo or solid) with live preview, 3) done: "You can change anything later in Settings ⚙". Skippable. Must show value immediately (Chrome/Edge show a "Change back?" prompt on the first new tab).
-- **Settings** - calendars on/off and order; look; festivals (sets, Gurpurab source, Hijri offset, Today/Tomorrow lines); fact on/off; Report a mistake / Suggest a feature (external form, URL placeholder); Support (Patreon); About (version, GPL-3.0 repo link, privacy policy, licences and photo credits, dates disclaimer)
-- **Look** - 6 themes (Chitta, Raat, Sarson, Phulkari, Mitti, Neela; names and palettes still open), 3 date styles (List, Centered, Compact), solid-colour mode; `prefers-color-scheme` sets the default theme
-- **Accessibility (V1 requirement)** - WCAG 2.2 AA contrast on every theme; `<time datetime>` and full-text `aria-label`s on dates; keyboard-operable onboarding and settings with visible focus; `prefers-reduced-motion`; holds at 200% zoom; never colour alone; `lang` attributes set now for V2
+- **New tab:** dates in enabled calendars, Today/Tomorrow lines (national days carry the country in brackets), photo with credit, fact, gradient behind text over photos.
+- **Onboarding:** 1) communities ("Which traditions do you follow?", pre-selected from browser language or timezone) with a live preview of suggested calendars and sets, 2) look, 3) done. Skippable: Gregorian plus any hinted suggestions, default theme, photo on.
+- **Settings:** communities, calendars (on/off, order), look, festivals (sets, Gurpurab source, Hijri offset, lines on/off), national days (countries), fact, Report a mistake, Support Tarikh, About (version, repo, privacy, credits, dates disclaimer).
+- **Look:** six themes (ids stay; display names to revisit), three date styles, solid mode.
+- **Accessibility:** AA contrast (tested), `<time datetime>`, keyboard-operable panels with visible focus, reduced motion, 200% zoom, never colour alone, `lang="en"`.
 
 ## Deployment
 
-- **Extension:** `pnpm build` -> `.output/chrome-mv3` (Chrome/Edge); `pnpm build:firefox` -> `.output/firefox-mv3`; store zips via `pnpm zip` / `pnpm zip:firefox`. `pnpm check` runs everything including `pnpm size`.
-- **Site:** `site/` deploys to Cloudflare Pages (free, static; no env vars, database, workers or cron). `_headers`: CORS `*` on `/data/*`, long `immutable` cache on `/photos/*`. Also hosts `privacy.html` and optionally a landing page. Domain: TODO.
-- **Versions:** `package.json` `version` is the single source (`0.0.x` prototype, `1.0.0` first release, then SemVer). `CHANGELOG.md` (Keep a Changelog) starts at `1.0.0`.
-- **Stores:** Chrome Web Store ($5 once; privacy practices tab, single-purpose statement, `storage` justification "Saves your display preferences"), Edge Add-ons (free, same assets), Firefox AMO (free; `gecko.id`, upload the source zip). Shared: icons 16/32/48/128, 1280x800 screenshots, 440x280 Chrome promo tile, privacy policy URL, "Open source (GPL-3.0) · No tracking · No accounts · Works offline" with repo link.
-- **Release automation** only after the first manual submissions.
-- **Legal:** privacy policy page (never a gate) must state settings stay in the browser (browser sync if on), content comes from Cloudflare (which may process IPs), the feedback form is third-party and optional, and photos are credited. Dates are indicative (confirm with the SGPC jantri or local mosque). Photo takedown contact on the site. Consider a lawyer review of the privacy page before launch.
+- **Extension:** `pnpm build` (`.output/chrome-mv3`), `pnpm build:firefox` (`.output/firefox-mv3`), `pnpm zip`/`zip:firefox`; `pnpm check` runs everything.
+- **Site:** `site/` on Cloudflare Pages (static, no env vars or workers); `_headers` as above; hosts `privacy.html`. Domain: TODO.
+- **Versions:** `package.json` is the source; `0.0.x`, then `1.0.0`, then SemVer; changelog from `1.0.0`.
+- **Stores:** Chrome ($5; privacy tab, single purpose "today's date in South Asian calendars, festivals, a daily photo and fact", `storage` justification), Edge, Firefox AMO (source zip). Icons, 1280x800 screenshots, 440x280 promo tile, privacy URL, "Open source (GPL-3.0) · No tracking · No accounts · Works offline".
+- **Legal:** privacy page (never a gate); dates disclaimer (follow reference almanacs, confirm locally); photo takedown contact.
 
 ## Open questions
 
-Plan §10 items (resolve in the plans, then re-run `/overview`):
+From plan §10:
 
-- [ ] **SGPC jantri 2026-2027** - collect as test fixtures. Feature 5's fixtures come from secondary reproductions of the Nanakshahi 558 jantri (to 14 Mar 2027), so a copy of the jantri itself, and jantri 559, are still to be read.
-- [ ] **Muslim set** - include Mawlid / Eid Milad-un-Nabi and Shab-e-Barat?
-- [ ] **Clock** - should the page also show the time?
-- [ ] **Uninstall feedback form** via `runtime.setUninstallURL` - yes or no?
-- [ ] **Patreon** - confirm Pakistan bank payout.
-- [ ] **Feedback form** - create it (Tally or Google Forms) and add the URL.
-- [ ] **Firefox add-on ID** - `wxt.config.ts` has placeholder `aajdadin@example.org`; before the first AMO upload use an address on a domain we own or a `{GUID}`, never a personal email (permanent once published).
-- [ ] **Public contact address** - needed on the privacy page, or is the feedback form enough? Use a dedicated address if so.
-- [ ] **Theme names and palettes** - the candidate names above are not final.
-
-Found while generating this overview:
-
-- **Oversized items** - build-plan items 7 (photos + fact + sign-off checks) and 13 (content pipeline: CSVs, two scripts, filter, remote refresh) bundle several concerns; `/feature` may propose splitting them.
-- **Layout vs code** - plan §5.5 names `src/festivals/resolve.ts`; feature 5 built `rules.ts`, `festivals.ts` and `lines.ts`. Plan §5.5 lists `ui/` as lazy chunks; the eager date-row view-model is `src/ui/today.ts`.
-- **Domain** - no Cloudflare domain is named yet (needed for content URLs, privacy page and the Firefox ID).
+- [ ] SGPC jantri 2026-2027 itself (fixtures come from reproductions) and jantri 559.
+- [ ] Authoritative source per new calendar (riskiest: Bhutanese, Sinhala, Nepal Sambat).
+- [ ] Community list review; Kashmiri Pandit calendar, Jain year, Orthodox Easter.
+- [ ] Shaka Amanta: one calendar with spellings or separate per community.
+- [ ] Muslim set: Mawlid and Shab-e-Barat?
+- [ ] National days list per country, from official holiday lists.
+- [ ] Clock on the page? Uninstall feedback URL?
+- [ ] Patreon payout and page URL; feedback form URL; Firefox ID (`tarikh@<domain>` or GUID).
+- [ ] Name checks (stores, domain, trademark); GitHub repo rename timing; public contact address; theme display names.

@@ -1,6 +1,8 @@
-# Aaj Da Din
+# Tarikh
 
-A Punjabi new-tab extension for Chrome, Edge and Firefox: today's date in the calendars Punjabis use, today's and tomorrow's festivals, a daily photo of Punjab and a daily fact.
+A new-tab extension for Chrome, Edge and Firefox for people from all of South Asia and the diaspora: today's date in the calendars you follow, today's and tomorrow's festivals for your communities, a daily photo of South Asia and a daily fact.
+
+Formerly **Aaj Da Din**; the code is renamed in build-plan item 20.
 
 **Open source (GPL-3.0) · No tracking · No accounts · Works offline**
 

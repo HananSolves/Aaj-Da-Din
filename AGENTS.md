@@ -12,11 +12,14 @@ for optional tool settings.
 
 ## What this is
 
-**Aaj Da Din** ("today's day") is a Punjabi new-tab browser extension for Chrome,
-Edge and Firefox (MV3, built with WXT). It shows today's date in the calendars
-Punjabis use, today's and tomorrow's festivals, a daily photo of Punjab and a
-daily fact. Pitch: fast, private, open source, no tracking, works offline.
-Current milestone: **v0**.
+**Tarikh** ("date"; formerly Aaj Da Din) is a new-tab browser extension for
+Chrome, Edge and Firefox (MV3, built with WXT) for people from all of South Asia
+(Afghanistan, Bangladesh, Bhutan, India, Maldives, Nepal, Pakistan, Sri Lanka) and
+the diaspora. It shows today's date in the calendars the person follows, today's
+and tomorrow's festivals for the communities they pick, a daily photo of South Asia
+and a daily fact. Pitch: fast, private, open source, no tracking, works offline.
+Current milestone: **v0**. The code still says Aaj Da Din until build-plan item 20
+renames it.
 
 ### Non-negotiables
 
@@ -27,12 +30,17 @@ Current milestone: **v0**.
   content scripts.
 - No analytics, tracking, accounts or backend. No remote code (remote JSON data
   is fine).
-- Calendar correctness is tested against SGPC jantri / panchang fixtures. Never
-  "fix" a date without a source.
+- Calendar correctness is tested against fixtures from each calendar's published
+  almanac (SGPC jantri, panchangs, official national calendars). Every calendar is
+  computed for its reference place (project-plan §3.4.6). Never "fix" a date
+  without a source.
+- Neutral: never political or controversial content (disputed territories, wars,
+  partitions, national identity disputes, maps or borders). National days are
+  opt-in and limited to each country's own official days (project-plan §3.4.5).
 - Do not add features the plan lists as dropped or deferred without asking.
 - Photos: Wikimedia Commons / Openverse only, licences CC0, PD, CC BY, CC BY-SA.
   Facts ship only when `status = verified`.
-- UI strings live in one file (`src/strings/en.ts`). V1 is English only.
+- UI strings live in one file (`src/strings/en.ts`). The UI is English only.
 
 ## Proportional engineering
 
