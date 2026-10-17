@@ -32,7 +32,11 @@ function card(message: AskMessage): HTMLElement {
   aside.className = "ask";
   aside.setAttribute("aria-label", en.support.cardLabel);
   aside.append(text, dismiss);
-  dismiss.addEventListener("click", () => aside.remove());
+  dismiss.addEventListener("click", () => {
+    aside.remove();
+    // The button held focus; the gear is the next focusable element after the card.
+    document.getElementById("settings-open")?.focus();
+  });
   return aside;
 }
 

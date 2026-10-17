@@ -13,6 +13,8 @@
   background: var(--bg);
   color: var(--fg);
   overflow-y: auto;
+  /* The sticky header must not cover a control that keyboard focus scrolls into view. */
+  scroll-padding-top: 5rem;
   font-size: 1rem;
 }
 
@@ -122,9 +124,10 @@
   margin: 0 0 0.75rem;
 }
 
+/* Not display: none, so the live regions stay in the accessibility tree and announce when filled. */
 .settings .error:empty,
 .settings .note:empty {
-  display: none;
+  margin: 0;
 }
 
 .settings a {

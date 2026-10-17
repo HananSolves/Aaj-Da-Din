@@ -65,11 +65,14 @@ body {
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
-/* Anchored to the top, not centred, so the festival lines arriving later cannot move the dates. */
+/*
+ * Anchored to the top, not centred, so the festival lines arriving later cannot move the dates.
+ * The 3.75rem floor keeps the first row below the fixed gear (it ends at 3.25rem) on short viewports.
+ */
 #app {
   box-sizing: border-box;
   min-height: 100%;
-  padding: clamp(2rem, 14vh, 8rem) 1.5rem 2rem;
+  padding: clamp(3.75rem, 14vh, 8rem) 1.5rem 2rem;
   max-width: 48rem;
   margin: 0 auto;
 }

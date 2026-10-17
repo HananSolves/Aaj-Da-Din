@@ -32,6 +32,6 @@ not listed here.
 - [ ] 14. **Daily photo** - 60 photos (6–8 bundled), month tags, tomorrow's photo prefetched, credit line.
 - [ ] 15. **Daily fact** - 120 verified facts with festival and month tags.
 - [x] 16. **Support and feedback** - Patreon ask card (14 days, monthly, festival moments), Support link, Report a mistake / Suggest a feature link.
-- [ ] 17. **Accessibility pass** - WCAG 2.2 AA contrast, keyboard operation, reduced motion, 200% zoom.
+- [x] 17. **Accessibility pass** - WCAG 2.2 AA contrast, keyboard operation, reduced motion, 200% zoom.
 - [ ] 18. **Content site and privacy policy** - Cloudflare Pages `site/`, headers, privacy page, dates disclaimer, photo takedown contact.
 - [ ] 19. **Store release 1.0.0** - icons, screenshots, listings for Chrome, Edge and Firefox, real Firefox add-on ID, changelog.
