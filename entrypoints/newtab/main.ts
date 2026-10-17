@@ -117,6 +117,22 @@ async function start(dates: HTMLElement, festivals: HTMLElement): Promise<void> 
 
   await render(current);
 
+  const app = festivals.parentElement;
+  if (app) {
+    // After the first frame, then idle: a fast page can have idle time before it has painted.
+    // `current` is read when it runs so it sees the synced settings.
+    requestAnimationFrame(() =>
+      requestIdleCallback(
+        () => {
+          void import("../../src/ui/ask-card.ts")
+            .then((card) => card.maybeShowAsk({ now, settings: current, parent: app }))
+            .catch(() => {});
+        },
+        { timeout: 2000 },
+      ),
+    );
+  }
+
   // storage.sync is the source of truth; the mirror may be a visit behind a change from another device.
   const synced = await loadSettings();
   if (synced && !edited && JSON.stringify(synced) !== JSON.stringify(current)) {

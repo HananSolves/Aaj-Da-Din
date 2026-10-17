@@ -4,6 +4,7 @@ import { calendarRows, moveCalendar, toggleCalendar, toggleFestivalSet } from ".
 import { NewerSettingsError, saveSettings } from "../settings/store.ts";
 import { backgrounds, type CalendarId, dateStyles, type Settings } from "../settings/types.ts";
 import { en } from "../strings/en.ts";
+import { feedbackUrl, supportUrl } from "../support/links.ts";
 import { themeIds } from "../themes/themes.ts";
 import "./settings-panel.css";
 
@@ -72,17 +73,29 @@ function section(title: string, ...children: HTMLElement[]): HTMLElement {
   return el;
 }
 
-function aboutSection(): HTMLElement {
-  const link = element("a", undefined, text.openSource);
-  link.href = repositoryUrl;
+function externalLink(label: string, href: string): HTMLParagraphElement {
+  const link = element("a", undefined, label);
+  link.href = href;
   link.target = "_blank";
   link.rel = "noopener noreferrer";
-  const source = element("p");
-  source.append(link);
+  const row = element("p");
+  row.append(link);
+  return row;
+}
+
+function supportSection(): HTMLElement {
+  return section(
+    en.support.section,
+    externalLink(en.support.supportLink, supportUrl),
+    externalLink(en.support.feedbackLink, feedbackUrl),
+  );
+}
+
+function aboutSection(): HTMLElement {
   return section(
     text.sections.about,
     element("p", undefined, `${text.version} ${browser.runtime.getManifest().version}`),
-    source,
+    externalLink(text.openSource, repositoryUrl),
   );
 }
 
@@ -245,6 +258,7 @@ export function openSettings({ settings, onChange }: SettingsPanelOptions): void
         commit({ ...state, showFact: !state.showFact }),
       ),
     ),
+    supportSection(),
     aboutSection(),
   );
 

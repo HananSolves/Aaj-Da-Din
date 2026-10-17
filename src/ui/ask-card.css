@@ -1,0 +1,46 @@
+.ask {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 32rem;
+  margin-top: 2rem;
+  padding: 0.25rem 0.25rem 0.25rem 1rem;
+  border: 1px solid var(--muted);
+  border-radius: 0.5rem;
+  color: var(--fg);
+  font-size: 0.9375rem;
+}
+
+.ask p {
+  flex: 1;
+  margin: 0;
+}
+
+.ask a {
+  color: inherit;
+}
+
+.ask button {
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+.ask button:hover,
+.ask button:focus-visible {
+  color: var(--fg);
+}
+
+.ask :focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 2px;
+}
+
+[data-date-style="centered"] .ask {
+  margin-inline: auto;
+}

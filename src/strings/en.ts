@@ -141,4 +141,28 @@ export const en = {
     version: "Version",
     openSource: "Open source (GPL-3.0)",
   },
+  support: {
+    section: "Support and feedback",
+    supportLink: "Support Aaj Da Din",
+    feedbackLink: "Report a mistake or suggest a feature",
+    cardLabel: "Support Aaj Da Din",
+    dismiss: "Dismiss",
+    messages: {
+      vaisakhi: {
+        text: "Vaisakhi mubarak! Aaj Da Din is made by one person.",
+        action: "Support it →",
+      },
+      eid: { text: "Eid mubarak! Free, private, no ads.", action: "Help keep it that way →" },
+      general: [
+        {
+          text: "Built by a Punjabi developer for Punjabis everywhere.",
+          action: "Support the project →",
+        },
+        {
+          text: "No tracking, no ads, ever. If Aaj Da Din brightens your day,",
+          action: "consider supporting it →",
+        },
+      ],
+    },
+  },
 } as const;

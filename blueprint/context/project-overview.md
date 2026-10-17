@@ -1,6 +1,6 @@
 # Aaj Da Din - Project Overview
 
-<!-- blueprint:source-hash d5eefe4d5b28e7fc54a333c63f472a58babed71fc6d7ada22cdcc865858a27f5 -->
+<!-- blueprint:source-hash 4e86f23b63361c331964fe5a38d89c49917d7485cc946f611ef9356650f88206 -->
 
 > A Punjabi new-tab browser extension (Chrome, Edge, Firefox): today's date in the calendars Punjabis use, today's and tomorrow's festivals, a daily photo of Punjab and a daily fact. Fast, private, open source, works offline.
 
@@ -105,8 +105,8 @@ The store (item 8, `src/settings/{migrations,store}.ts`) keeps the whole `Settin
 ### Local state (`storage.local`, 10 MB)
 
 - Content cache (manifest and content JSON, refreshed after paint if over 24 h old)
-- `installDate` - for the first donation ask (at least 14 days later)
-- `lastAskDate` - at most one ask per month
+- `installDate` - local `YYYY-MM-DD`, written by the first new tab that finds none; the first donation ask is at least 14 days later
+- `lastAskDate` - local `YYYY-MM-DD`, written when the ask card is shown; at most one ask per 30 days (rules in plan §11)
 - Photos are cached with the Cache API (needs no permission)
 
 ### CalendarYear (`data/calendar/<year>.json`, generated, 2026-2036)
